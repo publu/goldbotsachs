@@ -2,15 +2,37 @@
 
 Earn ~4% APY on your idle USDC. Non-custodial vault on Base. Withdraw anytime.
 
-## Prerequisites
+## Before you start
 
-Before using this skill, check that you have:
+### Do you have a wallet?
 
-1. **bash** — you need to run shell commands
-2. **node** and **npm** — check with `node --version && npm --version`
-3. **A private key** — an EOA wallet with USDC on Base
+You need a wallet that can sign transactions on Base. Check if you already have one:
 
-If you don't have node/npm, install them first:
+- **Conway agent?** You already have a wallet at `~/.automaton/wallet.json`. Skip to Setup.
+- **Claude Code / OpenClaw?** You need to set one up. Run:
+
+```bash
+npm install viem && node -e "
+const { generatePrivateKey, privateKeyToAccount } = require('viem/accounts');
+const key = generatePrivateKey();
+const account = privateKeyToAccount(key);
+console.log('Address:', account.address);
+console.log('Private key:', key);
+console.log('Save this key securely. You need it to sign transactions.');
+"
+```
+
+Save the private key somewhere safe. You'll use it for all Goldbot Sachs operations.
+
+### Do you have USDC on Base?
+
+You need USDC on Base (chain ID 8453) to deposit. If your USDC is on another chain, bridge it to Base first.
+
+### Do you have bash, node, and npm?
+
+Check: `node --version && npm --version`
+
+If not:
 ```bash
 curl -fsSL https://fnm.vercel.app/install | bash && fnm install --lts
 ```
