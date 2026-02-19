@@ -264,7 +264,7 @@ USDC returned instantly. No lockup. No penalties.
 - **Chain**: Base (8453)
 - **Asset**: USDC (`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`)
 - **Yield source**: Beefy Morpho Steakhouse USDC (`0xF1C55b6E063ee90A33FFE62deBe618962bae021e`)
-- **Fee**: 10% performance fee on yield only. No deposit/withdraw fees.
+- **Fee**: None. Beefy handles fees internally.
 
 ## ABI
 
@@ -278,7 +278,6 @@ USDC returned instantly. No lockup. No penalties.
   "function convertToAssets(uint256 shares) view returns (uint256)",
   "function convertToShares(uint256 assets) view returns (uint256)",
   "function totalAssets() view returns (uint256)",
-  "function harvest()",
   "function asset() view returns (address)"
 ]
 ```
