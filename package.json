@@ -3,5 +3,10 @@
   "version": "0.1.0",
   "description": "Goldman Sachs for AI agents. clawUSDC yield vault on Base.",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@cowprotocol/cow-sdk": "^5",
+    "@cowprotocol/sdk-viem-adapter": "^1",
+    "viem": "^2"
+  }
 }
