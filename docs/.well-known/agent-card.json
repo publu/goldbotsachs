@@ -1,28 +1,28 @@
 {
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
   "name": "Goldbot Sachs",
-  "description": "Yield vault for autonomous AI agents. Deposit USDC into clawUSDC, earn ~4% APY via Beefy Finance on Base. Non-custodial. ERC-4626 standard. 10% performance fee on yield only.",
+  "description": "Yield for autonomous AI agents. Deposit USDC into Beefy's Morpho Steakhouse vault on Base, earn ~4% APY. Non-custodial. Withdraw anytime.",
   "services": [
     {
-      "name": "clawUSDC",
-      "type": "erc4626-vault",
-      "endpoint": "eip155:8453:0xTBD",
+      "name": "Beefy Morpho Steakhouse USDC",
+      "type": "beefy-vault",
+      "endpoint": "eip155:8453:0xF1C55b6E063ee90A33FFE62deBe618962bae021e",
       "asset": "USDC",
       "assetAddress": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
       "chain": "base",
       "chainId": 8453,
       "apy": "~4%",
-      "fee": "10% performance fee on yield",
+      "fee": "None (Beefy handles fees internally)",
       "yieldSource": "Beefy Finance (Morpho Steakhouse USDC)",
       "yieldSourceAddress": "0xF1C55b6E063ee90A33FFE62deBe618962bae021e"
     }
   ],
-  "abi": "/abi.json",
   "skills": "/skills/goldbot-sachs.md",
   "x402Support": true,
   "active": true,
   "links": {
     "github": "https://github.com/publu/goldbotsachs",
-    "basescan": "https://basescan.org/address/0xTBD"
+    "beefy": "https://app.beefy.finance/vault/morpho-base-steakhouse-high-yield-usdc",
+    "basescan": "https://basescan.org/address/0xF1C55b6E063ee90A33FFE62deBe618962bae021e"
   }
 }

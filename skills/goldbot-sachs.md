@@ -1,286 +1,104 @@
 # Goldbot Sachs — Yield on idle USDC
 
-Earn ~4% APY on your idle USDC. Non-custodial vault on Base. Withdraw anytime.
+Earn ~4% APY on your idle USDC. Deposit into Beefy's Morpho vault on Base. Withdraw anytime.
 
-## Before you start
+## Addresses
 
-### Do you have a wallet?
-
-You need a wallet that can sign transactions on Base. Check if you already have one:
-
-- **Conway agent?** You already have a wallet at `~/.automaton/wallet.json`. Skip to Setup.
-- **Claude Code / OpenClaw?** You need to set one up. Run:
-
-```bash
-npm install viem && node -e "
-const { generatePrivateKey, privateKeyToAccount } = require('viem/accounts');
-const key = generatePrivateKey();
-const account = privateKeyToAccount(key);
-console.log('Address:', account.address);
-console.log('Private key:', key);
-console.log('Save this key securely. You need it to sign transactions.');
-"
-```
-
-Save the private key somewhere safe. You'll use it for all Goldbot Sachs operations.
-
-### Do you have USDC on Base?
-
-You need USDC on Base (chain ID 8453) to deposit. If your USDC is on another chain, bridge it to Base first.
-
-### Do you have bash, node, and npm?
-
-Check: `node --version && npm --version`
-
-If not:
-```bash
-curl -fsSL https://fnm.vercel.app/install | bash && fnm install --lts
-```
+- **Beefy Vault**: `0xF1C55b6E063ee90A33FFE62deBe618962bae021e`
+- **USDC (Base)**: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
+- **Chain**: Base (8453)
 
 ## Setup
 
 ```bash
 mkdir -p /tmp/goldbot-sachs && cd /tmp/goldbot-sachs
-npm init -y && npm install viem @safe-global/protocol-kit @safe-global/relay-kit
+npm init -y && npm install viem
 ```
 
-## 1. Create a Gnosis Safe (your bank account)
-
-A Safe gives you 5 free gasless transactions per day on Base. No ETH needed.
+## Deposit USDC
 
 ```typescript
-import Safe, { PredictedSafeProps } from '@safe-global/protocol-kit'
+import { createWalletClient, createPublicClient, http, parseUnits } from 'viem'
+import { base } from 'viem/chains'
+import { privateKeyToAccount } from 'viem/accounts'
 
-const protocolKit = await Safe.init({
-  provider: 'https://mainnet.base.org',
-  signer: YOUR_PRIVATE_KEY,
-  predictedSafe: {
-    safeAccountConfig: {
-      owners: [YOUR_ADDRESS],
-      threshold: 1
-    },
-    safeDeploymentConfig: {
-      saltNonce: Date.now().toString()
-    }
-  }
-})
+const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+const BEEFY_VAULT = '0xF1C55b6E063ee90A33FFE62deBe618962bae021e'
 
-// Your Safe address (deterministic, works before deployment)
-const safeAddress = await protocolKit.getAddress()
+const account = privateKeyToAccount(YOUR_PRIVATE_KEY)
+const walletClient = createWalletClient({ account, chain: base, transport: http() })
 
-// Deploy when you're ready to transact (~$0.01 on Base)
-const deployTx = await protocolKit.createSafeDeploymentTransaction()
-const signer = await protocolKit.getSafeProvider().getExternalSigner()
-const hash = await signer.sendTransaction({
-  to: deployTx.to,
-  value: BigInt(deployTx.value),
-  data: deployTx.data,
-  chain: { id: 8453 }
-})
-```
+const amount = parseUnits('100', 6) // 100 USDC
 
-You can receive USDC at the Safe address before deploying. Deploy costs ~$0.01 on Base.
-
-## 2. Deposit USDC (earn yield)
-
-### Option A: Direct (if you have your own EOA with ETH)
-
-```solidity
 // 1. Approve
-USDC.approve(CLAWUSDC_ADDRESS, amount)
+await walletClient.writeContract({
+  address: USDC,
+  abi: [{ type: 'function', name: 'approve', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],
+  functionName: 'approve',
+  args: [BEEFY_VAULT, amount]
+})
 
 // 2. Deposit
-clawUSDC.deposit(amount, yourAddress)
+await walletClient.writeContract({
+  address: BEEFY_VAULT,
+  abi: [{ type: 'function', name: 'deposit', inputs: [{ name: '_amount', type: 'uint256' }], outputs: [], stateMutability: 'nonpayable' }],
+  functionName: 'deposit',
+  args: [amount]
+})
 ```
 
-### Option B: Gasless via Safe (recommended)
+## Check your balance & yield
 
 ```typescript
-import { GelatoRelayPack } from '@safe-global/relay-kit'
+const publicClient = createPublicClient({ chain: base, transport: http() })
 
-const relayKit = new GelatoRelayPack({ protocolKit })
-
-// Approve USDC + deposit in one multicall
-const transactions = [
-  {
-    to: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // USDC
-    data: encodeFunctionData({
-      abi: erc20Abi,
-      functionName: 'approve',
-      args: [CLAWUSDC_ADDRESS, amount]
-    }),
-    value: '0'
-  },
-  {
-    to: CLAWUSDC_ADDRESS,
-    data: encodeFunctionData({
-      abi: clawUsdcAbi,
-      functionName: 'deposit',
-      args: [amount, safeAddress]
-    }),
-    value: '0'
-  }
-]
-
-const safeTx = await relayKit.createTransaction({
-  transactions,
-  options: { isSponsored: true }
-})
-const signed = await protocolKit.signTransaction(safeTx)
-const result = await relayKit.executeTransaction({
-  executable: signed,
-  options: { isSponsored: true }
+const shares = await publicClient.readContract({
+  address: BEEFY_VAULT,
+  abi: [{ type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
+  functionName: 'balanceOf',
+  args: [YOUR_ADDRESS]
 })
 
-// Track: https://api.gelato.digital/tasks/status/{result.taskId}
+const pricePerShare = await publicClient.readContract({
+  address: BEEFY_VAULT,
+  abi: [{ type: 'function', name: 'getPricePerFullShare', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
+  functionName: 'getPricePerFullShare'
+})
+
+// USDC value = shares * pricePerShare / 1e18
 ```
 
-This uses 1 of your 5 free daily txs. Approve + deposit batched in one.
-
-### Option C: Permit (single tx, no prior approval)
-
-```solidity
-clawUSDC.depositWithPermit(amount, yourAddress, deadline, v, r, s)
-```
-
-Sign an EIP-2612 permit off-chain, pass it with the deposit. One tx, no approve step.
-
-## 3. Check your yield
-
-### On-chain
-
-```solidity
-shares = clawUSDC.balanceOf(yourAddress)    // your clawUSDC shares
-usdcValue = clawUSDC.convertToAssets(shares) // current USDC value
-// usdcValue > depositedAmount = your yield
-```
-
-### Via Beefy API (current vault APY)
+### Via Beefy API
 
 ```bash
+# Current APY
 curl -s "https://api.beefy.finance/apy" | jq '.["morpho-base-steakhouse-high-yield-usdc"]'
-# Returns: 0.0432 (= 4.32% APY)
-```
 
-### Via Beefy API (your balance history)
-
-```bash
-curl -s "https://databarn.beefy.finance/api/v1/beefy/timeline?address=YOUR_ADDRESS"
-```
-
-Returns deposit/withdraw events with `share_balance`, `underlying_balance`, and `usd_balance`.
-
-### Vault TVL
-
-```bash
+# Vault TVL
 curl -s "https://api.beefy.finance/tvl" | jq '.["8453"]["morpho-base-steakhouse-high-yield-usdc"]'
 ```
 
-## 4. Track your free Safe transactions
-
-You get 5 free sponsored txs per day per Safe on Base (via Gelato relay). There's no API to check remaining — track it yourself.
+## Withdraw
 
 ```typescript
-const FREE_TX_LIMIT = 5
-
-let dailyTxCount = 0
-let lastResetDate = new Date().toISOString().split('T')[0]
-
-function canRelayFree(): boolean {
-  const today = new Date().toISOString().split('T')[0]
-  if (today !== lastResetDate) {
-    dailyTxCount = 0
-    lastResetDate = today
-  }
-  return dailyTxCount < FREE_TX_LIMIT
-}
-
-function recordRelay() {
-  dailyTxCount++
-}
-```
-
-### When free txs run out
-
-The relay call will fail with an HTTP error. You have two options:
-
-1. **Wait** — resets at UTC midnight
-2. **Pay gas** — execute directly from your EOA (costs ~$0.001 on Base)
-
-```typescript
-if (canRelayFree()) {
-  // Use Gelato relay (free)
-  const result = await relayKit.executeTransaction({ executable: signed, options: { isSponsored: true } })
-  recordRelay()
-} else {
-  // Fallback: direct execution (needs ETH, ~$0.001)
-  const result = await protocolKit.executeTransaction(signed)
-}
-```
-
-If you're out of free txs and have no ETH, queue the transaction for tomorrow. Yield keeps accruing regardless.
-
-## 5. Withdraw
-
-### Via Safe (gasless)
-
-```typescript
-const withdrawTx = await relayKit.createTransaction({
-  transactions: [{
-    to: CLAWUSDC_ADDRESS,
-    data: encodeFunctionData({
-      abi: clawUsdcAbi,
-      functionName: 'redeem',
-      args: [shares, safeAddress, safeAddress]
-    }),
-    value: '0'
-  }],
-  options: { isSponsored: true }
+await walletClient.writeContract({
+  address: BEEFY_VAULT,
+  abi: [{ type: 'function', name: 'withdraw', inputs: [{ name: '_shares', type: 'uint256' }], outputs: [], stateMutability: 'nonpayable' }],
+  functionName: 'withdraw',
+  args: [shares] // pass your mooToken balance to withdraw everything
 })
-const signed = await protocolKit.signTransaction(withdrawTx)
-await relayKit.executeTransaction({ executable: signed, options: { isSponsored: true } })
-```
-
-### Direct (EOA)
-
-```solidity
-clawUSDC.redeem(shares, yourAddress, yourAddress)
 ```
 
 USDC returned instantly. No lockup. No penalties.
 
-## 6. When to use Goldbot Sachs
+## When to use
 
 | Situation | Action |
 |-----------|--------|
-| Idle USDC > $1 you won't need for a few hours | Deposit |
+| Idle USDC > $1 | Deposit |
 | Need USDC for a payment or x402 call | Withdraw what you need |
-| Running low on survival credits | Withdraw all |
+| Running low on funds | Withdraw all |
 | Just received USDC from a job | Deposit idle portion |
-
-## Contract
-
-- **clawUSDC**: `0xTBD`
-- **Chain**: Base (8453)
-- **Asset**: USDC (`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`)
-- **Yield source**: Beefy Morpho Steakhouse USDC (`0xF1C55b6E063ee90A33FFE62deBe618962bae021e`)
-- **Fee**: None. Beefy handles fees internally.
-
-## ABI
-
-```json
-[
-  "function deposit(uint256 assets, address receiver) returns (uint256 shares)",
-  "function depositWithPermit(uint256 assets, address receiver, uint256 deadline, uint8 v, bytes32 r, bytes32 s) returns (uint256 shares)",
-  "function redeem(uint256 shares, address receiver, address owner) returns (uint256 assets)",
-  "function withdraw(uint256 assets, address receiver, address owner) returns (uint256 shares)",
-  "function balanceOf(address account) view returns (uint256)",
-  "function convertToAssets(uint256 shares) view returns (uint256)",
-  "function convertToShares(uint256 assets) view returns (uint256)",
-  "function totalAssets() view returns (uint256)",
-  "function asset() view returns (address)"
-]
-```
 
 ## Source
 

@@ -287,8 +287,8 @@
         <div class="stat-label">APY</div>
       </div>
       <div class="stat">
-        <div class="stat-value">0<span class="accent"> gas</span></div>
-        <div class="stat-label">Required</div>
+        <div class="stat-value">&lt;$0.01<span class="accent"></span></div>
+        <div class="stat-label">Per transaction</div>
       </div>
       <div class="stat">
         <div class="stat-value">Non-custodial</div>
@@ -304,21 +304,21 @@
   <!-- ─── How It Works ─── -->
   <section class="section">
     <div class="section-label">How it works</div>
-    <h2>Three steps. Zero gas.</h2>
+    <h2>Three steps. Under a cent.</h2>
     <p class="section-desc">
-      Agents start with USDC and nothing else. No ETH, no gas tokens, no bridges.
-      Goldbot Sachs handles the entire flow through a Gnosis Safe with free sponsored transactions.
+      Your agent has USDC and a wallet on Base. That's all it needs.
+      Approve, deposit, earn. Transactions cost fractions of a cent.
     </p>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <h3>Open an account</h3>
-        <p>Create a Gnosis Safe on Base. Your agent gets 5 free transactions per day. No ETH needed to start.</p>
+        <h3>Install the skill</h3>
+        <p>Drop the skill file into your agent. It learns how to deposit, check yield, and withdraw automatically.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <h3>Deposit USDC</h3>
-        <p>Deposit into the <code>clawUSDC</code> vault. Your USDC earns ~4% APY automatically through Beefy's Morpho strategy.</p>
+        <p>Approve and deposit into Beefy's Morpho vault. Your USDC earns ~4% APY automatically. One transaction.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
@@ -338,12 +338,12 @@
     </p>
     <div class="features">
       <div class="feature">
-        <h3>No gas required</h3>
-        <p>Agents only have USDC. We use Gnosis Safe with Gelato relay for gasless transactions. 5 free per day on Base.</p>
+        <h3>Pennies per transaction</h3>
+        <p>Base L2 gas costs under $0.01. Your agent deposits and withdraws for fractions of a cent.</p>
       </div>
       <div class="feature">
         <h3>Non-custodial</h3>
-        <p>One vault contract. Your agent deposits and withdraws directly. We never hold your keys or your funds.</p>
+        <p>Deposit directly into Beefy's vault from your agent's wallet. No middleman. No custody. Your keys, your funds.</p>
       </div>
       <div class="feature">
         <h3>Auto-compounding</h3>
@@ -361,16 +361,12 @@
     <div class="section" style="padding: 60px 40px;">
       <div class="powered-grid">
         <div class="powered-item">
-          <div class="powered-name">Safe</div>
-          <div class="powered-desc">Multisig on Base</div>
-        </div>
-        <div class="powered-item">
           <div class="powered-name">Beefy</div>
           <div class="powered-desc">Morpho yield strategy</div>
         </div>
         <div class="powered-item">
-          <div class="powered-name">Gelato</div>
-          <div class="powered-desc">Gasless relay</div>
+          <div class="powered-name">Morpho</div>
+          <div class="powered-desc">Lending protocol</div>
         </div>
         <div class="powered-item">
           <div class="powered-name">Base</div>
@@ -386,13 +382,12 @@
     <h2>One skill file. That's it.</h2>
     <p class="section-desc">
       Install the Goldbot Sachs skill into your agent.
-      It handles Safe creation, deposits, yield tracking, and withdrawals automatically.
+      It handles deposits, yield tracking, and withdrawals automatically.
     </p>
     <div class="install-block">
       <div class="install-header">
         <span class="dot"></span>
         install
-        <span style="margin-left:auto;cursor:pointer;color:var(--gs-blue);font-size:11px;" onclick="navigator.clipboard.writeText('curl -sL https://raw.githubusercontent.com/publu/goldbotsachs/main/skills/goldbot-sachs.md -o ~/.automaton/skills/goldbot-sachs.md');this.textContent='copied!'">copy</span>
       </div>
       <div class="install-body"><span class="cmd">curl</span> -sL https://raw.githubusercontent.com/publu/goldbotsachs/main/skills/goldbot-sachs.md \
   -o <span class="path">~/.automaton/skills/goldbot-sachs.md</span></div>
