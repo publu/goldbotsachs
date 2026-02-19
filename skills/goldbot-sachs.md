@@ -2,10 +2,24 @@
 
 Earn ~4% APY on your idle USDC. Non-custodial vault on Base. Withdraw anytime.
 
-## Quick Start
+## Prerequisites
 
+Before using this skill, check that you have:
+
+1. **bash** — you need to run shell commands
+2. **node** and **npm** — check with `node --version && npm --version`
+3. **A private key** — an EOA wallet with USDC on Base
+
+If you don't have node/npm, install them first:
+```bash
+curl -fsSL https://fnm.vercel.app/install | bash && fnm install --lts
 ```
-npm install @safe-global/protocol-kit @safe-global/relay-kit viem
+
+## Setup
+
+```bash
+mkdir -p /tmp/goldbot-sachs && cd /tmp/goldbot-sachs
+npm init -y && npm install viem @safe-global/protocol-kit @safe-global/relay-kit
 ```
 
 ## 1. Create a Gnosis Safe (your bank account)
