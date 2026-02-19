@@ -93,12 +93,10 @@ USDC returned instantly. No lockup. No penalties.
 
 ## Refuel — Gasless ETH via CoW Protocol
 
-When your wallet has **zero ETH** but holds USDC, use CoW Protocol to swap USDC→native ETH without needing gas upfront. The swap is intent-based: you sign a message (free), and CoW solvers execute the trade on your behalf, deducting fees from the sold USDC.
-
-**USDC Allowance required:** The wallet must have approved the CoW Vault Relayer (`0xC92E8bdf79f0507f65a392b0ab4667716BFE0110`) to spend USDC, or use Permit2.
+When your wallet has **zero ETH** but holds USDC, use CoW Protocol to swap USDC→native ETH without needing gas. The entire flow is off-chain signatures — the solver pays gas and deducts fees from the sold USDC. A USDC EIP-2612 permit is attached as a pre-hook so no prior approval tx is needed either.
 
 ```typescript
-import { createPublicClient, http } from 'viem'
+import { createPublicClient, createWalletClient, http, encodeFunctionData } from 'viem'
 import { privateKeyToAccount } from 'viem/accounts'
 import { base } from 'viem/chains'
 import {
@@ -110,45 +108,109 @@ import {
 import { ViemAdapter } from '@cowprotocol/sdk-viem-adapter'
 
 const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
+const COW_RELAYER = '0xC92E8bdf79f0507f65a392b0ab4667716BFE0110'
 const NATIVE_ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 const account = privateKeyToAccount(YOUR_PRIVATE_KEY)
 const publicClient = createPublicClient({ chain: base, transport: http() })
+const walletClient = createWalletClient({ account, chain: base, transport: http() })
 
-// 1. Wire up the viem adapter
+const sellAmount = BigInt(1 * 10 ** 6) // 1 USDC
+
+// 1. Check if we already have allowance — skip permit if so
+const allowance = await publicClient.readContract({
+  address: USDC,
+  abi: [{ type: 'function', name: 'allowance', inputs: [{ name: 'owner', type: 'address' }, { name: 'spender', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
+  functionName: 'allowance',
+  args: [account.address, COW_RELAYER]
+})
+
+let permitHook = undefined
+if (allowance < sellAmount) {
+  // 2. Sign a USDC permit off-chain (free, no gas)
+  const nonce = await publicClient.readContract({
+    address: USDC,
+    abi: [{ type: 'function', name: 'nonces', inputs: [{ name: 'owner', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
+    functionName: 'nonces',
+    args: [account.address]
+  })
+
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600) // 1 hour
+  const permitValue = 2n ** 256n - 1n // max approval
+
+  const permitSig = await walletClient.signTypedData({
+    domain: { name: 'USD Coin', version: '2', chainId: 8453, verifyingContract: USDC },
+    types: {
+      Permit: [
+        { name: 'owner', type: 'address' },
+        { name: 'spender', type: 'address' },
+        { name: 'value', type: 'uint256' },
+        { name: 'nonce', type: 'uint256' },
+        { name: 'deadline', type: 'uint256' }
+      ]
+    },
+    primaryType: 'Permit',
+    message: { owner: account.address, spender: COW_RELAYER, value: permitValue, nonce, deadline }
+  })
+
+  const r = permitSig.slice(0, 66)
+  const s = '0x' + permitSig.slice(66, 130)
+  const v = parseInt(permitSig.slice(130, 132), 16)
+
+  const permitCalldata = encodeFunctionData({
+    abi: [{
+      type: 'function', name: 'permit',
+      inputs: [
+        { name: 'owner', type: 'address' }, { name: 'spender', type: 'address' },
+        { name: 'value', type: 'uint256' }, { name: 'deadline', type: 'uint256' },
+        { name: 'v', type: 'uint8' }, { name: 'r', type: 'bytes32' }, { name: 's', type: 'bytes32' }
+      ],
+      outputs: [], stateMutability: 'nonpayable'
+    }],
+    functionName: 'permit',
+    args: [account.address, COW_RELAYER, permitValue, deadline, v, r, s]
+  })
+
+  permitHook = { target: USDC, callData: permitCalldata, gasLimit: '80000' }
+}
+
+// 3. Wire up the viem adapter + SDK
 const adapter = new ViemAdapter({ provider: publicClient, signer: account })
 setGlobalAdapter(adapter)
 
-// 2. Initialize the Trading SDK
 const sdk = new TradingSdk({
   chainId: SupportedChainId.BASE,
   signer: account,
   appCode: 'GoldbotSachs-Refuel'
 })
 
-// 3. Get a quote for 1 USDC → native ETH
+// 4. Get quote + post order (with permit pre-hook if needed)
+const advancedSettings = permitHook ? {
+  appData: { metadata: { hooks: { pre: [permitHook] } } }
+} : undefined
+
 const quoteAndPost = await sdk.getQuote({
   kind: OrderKind.SELL,
   sellToken: USDC,
   buyToken: NATIVE_ETH,
-  amount: (1 * 10 ** 6).toString(), // 1 USDC
+  amount: sellAmount.toString(),
   sellTokenDecimals: 6,
   buyTokenDecimals: 18,
   owner: account.address,
   receiver: account.address,
-  slippageBps: 100, // 1%
-})
+  slippageBps: 100,
+}, advancedSettings)
 
-// 4. Post the signed intent — solvers handle execution
 const orderId = await quoteAndPost.postSwapOrderFromQuote()
 console.log('Order:', orderId)
 console.log('Track: https://explorer.cow.fi/base/orders/' + orderId)
 ```
 
-**Why CoW Protocol:**
-- **Gasless** — fees come from the sold USDC; wallet pays 0 ETH
+**Zero gas required.** The permit is an off-chain signature attached as a CoW pre-hook — the solver executes it before the swap. No approval tx, no ETH needed.
+
 - **MEV-protected** — intent-based swaps can't be front-run
 - **Native ETH** — the `0xeee…e` marker delivers spendable ETH, not WETH
+- **Idempotent** — if the wallet already has allowance, the permit hook is skipped
 
 ## When to use
 
