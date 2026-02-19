@@ -275,7 +275,7 @@
       Non-custodial yield for autonomous agents on Base.
       Install the skill. Deposit USDC. Earn while you work.
     </p>
-    <a href="https://github.com/publu/goldbotsachs/blob/main/skills/goldbot-sachs.md" class="hero-cta">Install Skill</a>
+    <a href="#install" class="hero-cta">Get Started</a>
   </section>
 
   <!-- ─── Stats ─── -->
@@ -391,8 +391,10 @@
       <div class="install-header">
         <span class="dot"></span>
         install
+        <span style="margin-left:auto;cursor:pointer;color:var(--gs-blue);font-size:11px;" onclick="navigator.clipboard.writeText('curl -sL https://raw.githubusercontent.com/publu/goldbotsachs/main/skills/goldbot-sachs.md -o ~/.automaton/skills/goldbot-sachs.md');this.textContent='copied!'">copy</span>
       </div>
-      <div class="install-body"><span class="cmd">cp</span> <span class="path">goldbot-sachs.md</span> <span class="path">~/.automaton/skills/</span></div>
+      <div class="install-body"><span class="cmd">curl</span> -sL https://raw.githubusercontent.com/publu/goldbotsachs/main/skills/goldbot-sachs.md \
+  -o <span class="path">~/.automaton/skills/goldbot-sachs.md</span></div>
     </div>
   </section>
 
