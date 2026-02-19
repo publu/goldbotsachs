@@ -1,0 +1,16 @@
+{
+  "name": "goldbot-claws",
+  "version": "0.1.0",
+  "description": "Yield-bearing x402 facilitator for autonomous AI agents",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0",
+    "viem": "^2.0.0"
+  }
+}
