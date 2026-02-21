@@ -2,12 +2,12 @@
   "name": "goldbot-sachs-skill",
   "version": "1.0.0",
   "description": "Goldbot Sachs DeFi Yield Skill",
+  "type": "module",
   "main": "scripts/check-balance.js",
   "dependencies": {
-    "@cowprotocol/cow-sdk": "^5.0.0",
-    "@cowprotocol/sdk-viem-adapter": "^1.0.0",
+    "@cowprotocol/cow-sdk": "^7.3.7",
+    "@cowprotocol/sdk-viem-adapter": "^0.3.8",
     "@safe-global/protocol-kit": "^6.1.2",
-    "@safe-global/relay-kit": "^4.1.1",
     "viem": "^2.46.2"
   },
   "author": "Goldbot Sachs",
