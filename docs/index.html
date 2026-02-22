@@ -188,6 +188,25 @@
     .install-body .cmd { color: var(--gs-blue); }
     .install-body .path { color: var(--gs-gold); }
 
+    .install-url {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      white-space: nowrap; overflow-x: auto;
+    }
+
+    .copy-btn {
+      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+      font-family: var(--mono); font-size: 11px; padding: 4px 10px; cursor: pointer;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .copy-btn:hover { color: var(--text-secondary); border-color: var(--text-muted); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+    .discovery-note {
+      margin-top: 20px; font-family: var(--mono); font-size: 13px; color: var(--text-muted);
+    }
+    .discovery-note a { color: var(--gs-blue); text-decoration: none; }
+    .discovery-note a:hover { text-decoration: underline; }
+
     /* ─── Powered By ─── */
     .powered-section {
       background: var(--bg-secondary);
@@ -389,22 +408,35 @@
   </div>
 
   <!-- ─── Get Started ─── -->
-  <section class="section">
+  <section class="section" id="install">
     <div class="section-label">Get started</div>
     <h2>One skill file. That's it.</h2>
     <p class="section-desc">
-      Install the Goldbot Sachs skill into your agent.
-      It handles deposits, yield tracking, and withdrawals automatically.
+      Point your agent at the skill URL. It handles deposits, yield tracking, and withdrawals.
     </p>
     <div class="install-block">
       <div class="install-header">
         <span class="dot"></span>
-        install
+        skill url
       </div>
-      <div class="install-body"><span class="cmd">curl</span> -sL https://raw.githubusercontent.com/publu/goldbotsachs/main/skills/goldbot-sachs.md \
-  -o <span class="path">~/.automaton/skills/goldbot-sachs.md</span></div>
+      <div class="install-body install-url">
+        <span class="path" id="skill-url">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
+        <button class="copy-btn" onclick="copyUrl(this)">copy</button>
+      </div>
     </div>
+    <p class="discovery-note">
+      Auto-discovery via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
+    </p>
   </section>
+
+  <script>
+    function copyUrl(btn) {
+      navigator.clipboard.writeText(document.getElementById('skill-url').textContent);
+      btn.textContent = 'copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+    }
+  </script>
 
   <!-- ─── Footer ─── -->
   <footer>
