@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Goldbot Sachs</title>
-  <meta name="description" content="Your agent's money should be making money. Non-custodial yield on Base.">
+  <meta name="description" content="Yield for autonomous AI agents. Deposit USDC, earn ~4% APY, refer others to earn more.">
 
   <link rel="alternate" type="application/json" href="/.well-known/agent-card.json">
 
@@ -57,6 +57,7 @@
     .logo-text { font-family: var(--serif); font-weight: 500; font-size: 18px; color: var(--text-primary); letter-spacing: 1.5px; text-transform: uppercase; }
     .logo-divider { width: 1px; height: 24px; background: var(--border); }
 
+    nav { display: flex; gap: 4px; }
     nav a {
       color: var(--text-muted); text-decoration: none; font-family: var(--mono);
       font-size: 12px; padding: 6px 12px; border: 1px solid transparent; transition: all 0.2s;
@@ -65,7 +66,7 @@
 
     /* ─── Hero ─── */
     .hero {
-      padding: 180px 40px 100px;
+      padding: 180px 40px 80px;
       max-width: 1100px; margin: 0 auto;
       text-align: center;
     }
@@ -78,17 +79,51 @@
 
     .hero-sub {
       font-size: 20px; font-weight: 300; color: var(--text-secondary);
-      line-height: 1.7; max-width: 600px; margin: 0 auto 48px;
+      line-height: 1.7; max-width: 560px; margin: 0 auto 48px;
     }
 
-    .hero-cta {
-      display: inline-block; padding: 14px 36px;
-      background: var(--gs-gold); color: var(--bg-primary);
-      font-family: var(--sans); font-size: 15px; font-weight: 600;
-      text-decoration: none; letter-spacing: 0.5px;
-      transition: background 0.2s;
+    /* ─── Install ─── */
+    .install-block {
+      background: var(--bg-card); border: 1px solid var(--border);
+      max-width: 640px; margin: 0 auto; cursor: pointer;
+      transition: all 0.25s ease; position: relative;
     }
-    .hero-cta:hover { background: var(--gs-gold-light); }
+    .install-block:hover {
+      border-color: var(--gs-gold);
+      box-shadow: 0 0 0 1px var(--gs-gold), 0 8px 32px rgba(201, 168, 76, 0.08);
+    }
+    .install-block:active { transform: scale(0.995); }
+
+    .install-header {
+      padding: 14px 24px; border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .install-header-left { display: flex; align-items: center; gap: 8px; }
+    .install-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+    .copy-hint {
+      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .install-block:hover .copy-hint { color: var(--gs-gold); }
+    .copy-hint.copied { color: var(--green); }
+
+    .install-body {
+      padding: 24px; font-family: var(--mono); font-size: 14px;
+      line-height: 2.2; color: var(--text-secondary); white-space: nowrap;
+      overflow-x: auto; text-align: center;
+    }
+
+    .install-body .path { color: var(--gs-gold); }
+
+    .install-note {
+      margin-top: 16px; font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+      text-align: center;
+    }
+    .install-note a { color: var(--gs-blue); text-decoration: none; }
+    .install-note a:hover { text-decoration: underline; }
 
     /* ─── Stats ─── */
     .stats-bar {
@@ -166,53 +201,61 @@
 
     .feature p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
 
-    /* ─── Install ─── */
-    .install-block {
-      background: var(--bg-card); border: 1px solid var(--border);
-      max-width: 640px; margin: 0 auto; cursor: pointer;
-      transition: all 0.25s ease;
-      position: relative;
-    }
-    .install-block:hover {
-      border-color: var(--gs-gold);
-      box-shadow: 0 0 0 1px var(--gs-gold), 0 8px 32px rgba(201, 168, 76, 0.08);
-    }
-    .install-block:active { transform: scale(0.995); }
-
-    .install-header {
-      padding: 14px 24px; border-bottom: 1px solid var(--border);
-      font-family: var(--mono); font-size: 12px; color: var(--text-muted);
-      display: flex; align-items: center; justify-content: space-between;
+    /* ─── Referral ─── */
+    .referral-section {
+      border-top: 1px solid var(--border);
+      background: var(--bg-secondary);
     }
 
-    .install-header-left { display: flex; align-items: center; gap: 8px; }
-    .install-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-
-    .copy-hint {
-      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
-      transition: color 0.2s;
-    }
-    .install-block:hover .copy-hint { color: var(--gs-gold); }
-    .copy-hint.copied { color: var(--green); }
-
-    .install-body {
-      padding: 24px; font-family: var(--mono); font-size: 14px;
-      line-height: 2.2; color: var(--text-secondary); white-space: nowrap;
-      overflow-x: auto; text-align: center;
-    }
-
-    .install-body .path { color: var(--gs-gold); }
-
-    .discovery-note {
-      margin-top: 16px; font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+    .referral-inner {
+      max-width: 1100px; margin: 0 auto; padding: 80px 40px;
       text-align: center;
     }
-    .discovery-note a { color: var(--gs-blue); text-decoration: none; }
-    .discovery-note a:hover { text-decoration: underline; }
+
+    .referral-inner h2 {
+      font-family: var(--serif); font-size: 40px; font-weight: 400;
+      letter-spacing: -0.5px; margin-bottom: 16px;
+    }
+
+    .referral-inner h2 em { font-style: italic; color: var(--gs-gold); }
+
+    .referral-desc {
+      font-size: 17px; color: var(--text-secondary); line-height: 1.8;
+      max-width: 560px; margin: 0 auto 40px;
+    }
+
+    .referral-steps {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+      max-width: 800px; margin: 0 auto;
+    }
+
+    .referral-step {
+      text-align: center; padding: 24px;
+    }
+
+    .referral-step-num {
+      font-family: var(--mono); font-size: 13px; color: var(--gs-gold);
+      margin-bottom: 8px;
+    }
+
+    .referral-step-title {
+      font-family: var(--sans); font-size: 15px; font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .referral-step-desc {
+      font-size: 14px; color: var(--text-muted); line-height: 1.6;
+    }
+
+    .referral-link-example {
+      margin-top: 32px; font-family: var(--mono); font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .referral-link-example span { color: var(--gs-gold); }
 
     /* ─── Powered By ─── */
     .powered-section {
-      background: var(--bg-secondary);
       border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
 
@@ -221,18 +264,14 @@
       flex-wrap: wrap;
     }
 
-    .powered-item {
-      text-align: center;
-    }
+    .powered-item { text-align: center; }
 
     .powered-name {
       font-family: var(--mono); font-size: 14px; font-weight: 500;
       color: var(--text-primary); margin-bottom: 4px;
     }
 
-    .powered-desc {
-      font-size: 13px; color: var(--text-muted);
-    }
+    .powered-desc { font-size: 13px; color: var(--text-muted); }
 
     /* ─── Footer ─── */
     footer {
@@ -268,6 +307,8 @@
       .section { padding: 60px 24px; }
       .steps { grid-template-columns: 1fr; }
       .features { grid-template-columns: 1fr; }
+      .referral-inner { padding: 60px 24px; }
+      .referral-steps { grid-template-columns: 1fr; }
       .header-inner { padding: 16px 24px; }
       .logo-text { display: none; }
       .powered-grid { gap: 32px; }
@@ -285,7 +326,8 @@
         <span class="logo-text">Goldbot Sachs</span>
       </a>
       <nav>
-        <a href="#install">Get Started</a>
+        <a href="#how">How it works</a>
+        <a href="#referral">Referrals</a>
         <a href="https://github.com/publu/goldbotsachs">GitHub</a>
       </nav>
     </div>
@@ -295,11 +337,10 @@
   <section class="hero">
     <h1>Your agent's money<br>should be <em>making money</em></h1>
     <p class="hero-sub">
-      Non-custodial yield for autonomous agents on Base.
-      Drop in the skill. Deposit USDC. Earn while you work.
+      Your agent earns USDC from jobs, payments, and x402 calls.
+      Between transactions, that money sits idle. We put it to work.
     </p>
 
-    <!-- ─── Get Started (inline) ─── -->
     <div class="install-block" id="install" onclick="copySkillUrl(this)">
       <div class="install-header">
         <span class="install-header-left"><span class="dot"></span> skill url</span>
@@ -309,57 +350,59 @@
         <span class="path" id="skill-url">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
       </div>
     </div>
-    <p class="discovery-note">
-      Or auto-discover via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
+    <p class="install-note">
+      A skill file is a markdown document that teaches your agent new capabilities.<br>
+      Point your agent at this URL or drop it in your skills directory.
     </p>
-    <p style="margin-top:20px;font-family:var(--mono);font-size:12px;color:var(--text-muted);">Works best with <a href="https://conway.tech" style="color:var(--text-secondary);text-decoration:none;">Conway</a> or any <a href="https://github.com/royalaid/clawfi" style="color:var(--text-secondary);text-decoration:none;">Claw</a> setup with a wallet</p>
+    <p class="install-note" style="margin-top:8px;">
+      Auto-discover via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
+    </p>
   </section>
 
   <!-- ─── Stats ─── -->
   <div class="stats-bar">
     <div class="stats-inner">
       <div class="stat">
-        <div class="stat-value">~4<span class="accent">%</span></div>
+        <div class="stat-value" id="apy-value">~4<span class="accent">%</span></div>
         <div class="stat-label">APY</div>
       </div>
       <div class="stat">
-        <div class="stat-value">&lt;$0.01<span class="accent"></span></div>
+        <div class="stat-value">&lt;$0<span class="accent">.01</span></div>
         <div class="stat-label">Per transaction</div>
       </div>
       <div class="stat">
-        <div class="stat-value">Non-custodial</div>
-        <div class="stat-label">Always yours</div>
+        <div class="stat-value">Instant</div>
+        <div class="stat-label">Withdrawals</div>
       </div>
       <div class="stat">
-        <div class="stat-value">Base</div>
-        <div class="stat-label">Network</div>
+        <div class="stat-value">5<span class="accent">%</span></div>
+        <div class="stat-label">Referral yield</div>
       </div>
     </div>
   </div>
 
   <!-- ─── How It Works ─── -->
-  <section class="section">
+  <section class="section" id="how">
     <div class="section-label">How it works</div>
     <h2>Three steps. Under a cent.</h2>
     <p class="section-desc">
       Your agent has USDC and a wallet on Base. That's all it needs.
-      Approve, deposit, earn. Transactions cost fractions of a cent.
     </p>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
         <h3>Install the skill</h3>
-        <p>Drop the skill file into your agent. It learns how to deposit, check yield, and withdraw automatically.</p>
+        <p>Give your agent the skill URL. It learns how to deposit idle USDC, check yield, withdraw for payments, and even refuel ETH via CoW Protocol &mdash; all autonomously.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <h3>Deposit USDC</h3>
-        <p>Approve and deposit into Beefy's Morpho vault. Your USDC earns ~4% APY automatically. One transaction.</p>
+        <p>Your agent deposits into clawUSDC &mdash; an ERC-4626 vault that routes to Beefy's Morpho strategy. Yield accrues automatically. No harvesting, no rebalancing.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <h3>Withdraw anytime</h3>
-        <p>Need funds for a payment or x402 call? Withdraw instantly. No lockup. No penalties. No waiting.</p>
+        <p>When your agent needs funds for a payment or x402 call, it withdraws instantly. No lockup. No penalties. USDC back in the wallet in one transaction.</p>
       </div>
     </div>
   </section>
@@ -367,30 +410,62 @@
   <!-- ─── Why ─── -->
   <section class="section">
     <div class="section-label">Why Goldbot Sachs</div>
-    <h2>Built for agents, not humans</h2>
+    <h2>Built for the agent economy</h2>
     <p class="section-desc">
-      Your agent earned USDC. Now what? It sits in a wallet doing nothing.
-      That's money losing value every day. We fix that.
+      Agents earn and spend USDC. The gap between earning and spending is wasted yield.
+      Goldbot Sachs is designed for that gap.
     </p>
     <div class="features">
       <div class="feature">
-        <h3>Pennies per transaction</h3>
-        <p>Base L2 gas costs under $0.01. Your agent deposits and withdraws for fractions of a cent.</p>
+        <h3>Zero-gas refueling</h3>
+        <p>Wallet has USDC but no ETH? The skill swaps USDC to ETH via CoW Protocol using off-chain signatures. No gas needed to get gas.</p>
       </div>
       <div class="feature">
-        <h3>Non-custodial</h3>
-        <p>Deposit directly into Beefy's vault from your agent's wallet. No middleman. No custody. Your keys, your funds.</p>
+        <h3>x402 compatible</h3>
+        <p>Withdraw and pay in one flow. Your agent pulls funds from the vault only when it needs to spend &mdash; idle USDC stays earning.</p>
       </div>
       <div class="feature">
-        <h3>Auto-compounding</h3>
-        <p>Yield accrues automatically through Beefy Finance. No manual harvesting, no rebalancing, no maintenance.</p>
+        <h3>Referral network</h3>
+        <p>Every depositor gets a referral link. Share it with other agents, earn yield on their deposits. The network grows itself.</p>
       </div>
       <div class="feature">
-        <h3>Install and forget</h3>
-        <p>Drop the skill file into your agent. It knows when to deposit idle funds and when to withdraw for payments.</p>
+        <h3>One contract, no server</h3>
+        <p>clawUSDC is a single ERC-4626 vault on Base. No backend, no API, no custody. Open source. Verify everything on-chain.</p>
       </div>
     </div>
   </section>
+
+  <!-- ─── Referral ─── -->
+  <div class="referral-section" id="referral">
+    <div class="referral-inner">
+      <div class="section-label" style="opacity:0.8;">Referrals</div>
+      <h2>Earn more by <em>growing the network</em></h2>
+      <p class="referral-desc">
+        Every depositor gets a unique referral link. When another agent deposits through your link,
+        you earn a share of the yield their deposits generate. On-chain. Automatic. Forever.
+      </p>
+      <div class="referral-steps">
+        <div class="referral-step">
+          <div class="referral-step-num">01</div>
+          <div class="referral-step-title">Deposit</div>
+          <div class="referral-step-desc">Deposit USDC into clawUSDC. You're now earning yield.</div>
+        </div>
+        <div class="referral-step">
+          <div class="referral-step-num">02</div>
+          <div class="referral-step-title">Share</div>
+          <div class="referral-step-desc">Share your link. The referred agent gets a personalized skill file with your address built in.</div>
+        </div>
+        <div class="referral-step">
+          <div class="referral-step-num">03</div>
+          <div class="referral-step-title">Earn</div>
+          <div class="referral-step-desc">When they deposit, your referral is recorded on-chain. You earn referral yield automatically.</div>
+        </div>
+      </div>
+      <p class="referral-link-example">
+        <span>goldbotsachs.com/r/</span>YOUR_WALLET_ADDRESS
+      </p>
+    </div>
+  </div>
 
   <!-- ─── Powered By ─── -->
   <div class="powered-section">
@@ -406,7 +481,7 @@
         </a>
         <a href="https://github.com/royalaid/clawUSDC" style="text-decoration:none;" class="powered-item">
           <div class="powered-name" style="color:var(--gs-gold);">clawUSDC</div>
-          <div class="powered-desc">Yield vault with referrals</div>
+          <div class="powered-desc">ERC-4626 yield vault</div>
         </a>
         <div class="powered-item">
           <div class="powered-name">Beefy</div>
@@ -433,6 +508,18 @@
       hint.classList.add('copied');
       setTimeout(function() { hint.textContent = 'click to copy'; hint.classList.remove('copied'); }, 2000);
     }
+
+    // Live APY from Beefy
+    fetch('https://api.beefy.finance/apy')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var apy = data['morpho-base-steakhouse-high-yield-usdc'];
+        if (apy) {
+          var pct = (apy * 100).toFixed(1);
+          document.getElementById('apy-value').innerHTML = pct + '<span class="accent">%</span>';
+        }
+      })
+      .catch(function() {});
   </script>
 
   <!-- ─── Footer ─── -->
@@ -441,13 +528,13 @@
       <div class="footer-logo">Goldbot Sachs</div>
       <div class="footer-links">
         <a href="https://github.com/publu/goldbotsachs">github</a>
-        <a href="https://github.com/publu/goldbotsachs/blob/main/skills/goldbot-sachs.md">skill file</a>
+        <a href="/skills/goldbot-sachs.md">skill file</a>
         <a href="https://github.com/royalaid/clawUSDC">clawUSDC</a>
         <a href="https://github.com/royalaid/clawfi">clawfi</a>
       </div>
     </div>
     <div class="footer-sig" style="display:flex;justify-content:space-between;align-items:center;">
-      <span>฿hat & Pablo</span>
+      <span>&#x0E3F;hat & Pablo</span>
       <a href="https://www.mai.finance" style="color:var(--text-muted);text-decoration:none;font-family:var(--mono);font-size:11px;transition:color 0.2s;">A <span style="color:var(--gs-gold);">QiDao Protocol</span> project &mdash; mai.finance</a>
     </div>
   </footer>

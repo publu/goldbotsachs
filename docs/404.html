@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goldbot Sachs</title>
+  <meta name="description" content="You've been invited to Goldbot Sachs. Earn ~4% APY on idle USDC.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gs-gold: #C9A84C;
+      --gs-gold-light: #D4B86A;
+      --gs-blue: #7297C5;
+      --bg-primary: #0A0A0F;
+      --bg-secondary: #111118;
+      --bg-card: #16161F;
+      --text-primary: #F5F5F7;
+      --text-secondary: #A2A4A6;
+      --text-muted: #6B6D70;
+      --border: #222230;
+      --green: #7EC699;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Consolas', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(10, 10, 15, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1100px; margin: 0 auto; padding: 20px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .logo-mark { font-family: var(--serif); font-weight: 700; font-size: 28px; color: var(--gs-gold); }
+    .logo-text { font-family: var(--serif); font-weight: 500; font-size: 18px; color: var(--text-primary); letter-spacing: 1.5px; text-transform: uppercase; }
+    .logo-divider { width: 1px; height: 24px; background: var(--border); }
+
+    nav a {
+      color: var(--text-muted); text-decoration: none; font-family: var(--mono);
+      font-size: 12px; padding: 6px 12px; border: 1px solid transparent; transition: all 0.2s;
+    }
+    nav a:hover { color: var(--text-secondary); border-color: var(--border); }
+
+    /* ─── Referral page ─── */
+    .referral-page {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 120px 40px 60px;
+    }
+
+    .referral-card {
+      max-width: 560px; width: 100%; text-align: center;
+    }
+
+    .referrer-tag {
+      display: inline-block; padding: 5px 14px; margin-bottom: 28px;
+      font-family: var(--mono); font-size: 12px; color: var(--gs-blue);
+      background: var(--bg-card); border: 1px solid var(--border);
+    }
+
+    .referral-card h1 {
+      font-family: var(--serif); font-size: 44px; font-weight: 400;
+      line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 20px;
+    }
+    .referral-card h1 em { font-style: italic; color: var(--gs-gold); }
+
+    .referral-sub {
+      font-size: 17px; color: var(--text-secondary); line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .install-block {
+      background: var(--bg-card); border: 1px solid var(--border);
+      cursor: pointer; transition: all 0.25s ease; position: relative;
+    }
+    .install-block:hover {
+      border-color: var(--gs-gold);
+      box-shadow: 0 0 0 1px var(--gs-gold), 0 8px 32px rgba(201, 168, 76, 0.08);
+    }
+    .install-block:active { transform: scale(0.995); }
+
+    .install-header {
+      padding: 14px 24px; border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .install-header-left { display: flex; align-items: center; gap: 8px; }
+    .install-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+    .copy-hint {
+      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .install-block:hover .copy-hint { color: var(--gs-gold); }
+    .copy-hint.copied { color: var(--green); }
+
+    .install-body {
+      padding: 24px; font-family: var(--mono); font-size: 14px;
+      line-height: 2; color: var(--text-secondary); text-align: center;
+    }
+
+    .install-body .path { color: var(--gs-gold); }
+
+    .referral-note {
+      margin-top: 20px; font-family: var(--mono); font-size: 12px;
+      color: var(--text-muted); line-height: 1.8;
+    }
+    .referral-note a { color: var(--gs-blue); text-decoration: none; }
+    .referral-note a:hover { text-decoration: underline; }
+    .referral-note strong { color: var(--text-secondary); }
+
+    /* ─── 404 ─── */
+    .not-found {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 120px 40px 60px; text-align: center;
+    }
+
+    .not-found h1 {
+      font-family: var(--serif); font-size: 48px; color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .not-found p { color: var(--text-secondary); margin-bottom: 24px; }
+
+    .not-found a {
+      color: var(--gs-gold); text-decoration: none; font-family: var(--mono); font-size: 14px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 40px;
+    }
+
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .footer-logo { font-family: var(--serif); font-size: 14px; color: var(--text-muted); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-family: var(--mono); font-size: 12px; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text-secondary); }
+
+    .footer-sig {
+      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+      max-width: 1100px; margin: 24px auto 0; padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 768px) {
+      .referral-page { padding: 120px 24px 40px; }
+      .referral-card h1 { font-size: 32px; }
+      .header-inner { padding: 16px 24px; }
+      .logo-text { display: none; }
+      .footer-inner { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark">GS</span>
+        <span class="logo-divider"></span>
+        <span class="logo-text">Goldbot Sachs</span>
+      </a>
+      <nav>
+        <a href="/">Home</a>
+        <a href="https://github.com/publu/goldbotsachs">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Referral page -->
+  <div class="referral-page" id="referral-page" style="display:none;">
+    <div class="referral-card">
+      <div class="referrer-tag">invited by <span id="referrer-display"></span></div>
+      <h1>Put your idle USDC<br>to <em>work</em></h1>
+      <p class="referral-sub">
+        Deposit USDC into clawUSDC on Base. Earn ~4% APY automatically.
+        Withdraw anytime. Then share your own link to earn even more.
+      </p>
+
+      <div class="install-block" onclick="copySkill()">
+        <div class="install-header">
+          <span class="install-header-left"><span class="dot"></span> personalized skill</span>
+          <span class="copy-hint" id="copy-hint">click to copy</span>
+        </div>
+        <div class="install-body">
+          <span class="path" id="skill-preview"></span>
+        </div>
+      </div>
+
+      <p class="referral-note" style="margin-top:16px;">
+        Save as <code style="font-family:var(--mono);color:var(--gs-blue);background:var(--bg-card);padding:2px 6px;border:1px solid var(--border);">goldbot-sachs.md</code> in your agent's skills directory, or point your agent at this content.
+      </p>
+      <p class="referral-note" style="margin-top:20px;">
+        After you deposit, get your own referral link:<br>
+        <strong>goldbotsachs.com/r/YOUR_ADDRESS</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- 404 fallback -->
+  <div class="not-found" id="not-found-page" style="display:none;">
+    <div>
+      <h1>404</h1>
+      <p>This page doesn't exist.</p>
+      <a href="/">Back to Goldbot Sachs</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">Goldbot Sachs</div>
+      <div class="footer-links">
+        <a href="https://github.com/publu/goldbotsachs">github</a>
+        <a href="/skills/goldbot-sachs.md">skill file</a>
+        <a href="https://github.com/royalaid/clawUSDC">clawUSDC</a>
+      </div>
+    </div>
+    <div class="footer-sig" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>&#x0E3F;hat & Pablo</span>
+      <a href="https://www.mai.finance" style="color:var(--text-muted);text-decoration:none;font-family:var(--mono);font-size:11px;">A <span style="color:var(--gs-gold);">QiDao Protocol</span> project &mdash; mai.finance</a>
+    </div>
+  </footer>
+
+  <script>
+    var SKILL_TEMPLATE = [
+      '# Goldbot Sachs — Yield on idle USDC',
+      '',
+      'Earn ~4% APY on idle USDC. Deposit into clawUSDC on Base. Withdraw anytime.',
+      '',
+      '**Referred by:** `{{REFERRER}}`',
+      'Your first deposit registers this referral on-chain.',
+      'After depositing, share your own link to earn on referrals: `https://goldbotsachs.com/r/YOUR_WALLET_ADDRESS`',
+      '',
+      '## Addresses',
+      '',
+      '- **clawUSDC Vault**: TBD (deployment pending)',
+      '- **USDC (Base)**: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`',
+      '- **Beefy Vault (underlying)**: `0xF1C55b6E063ee90A33FFE62deBe618962bae021e`',
+      '- **Chain**: Base (8453)',
+      '',
+      '## Setup',
+      '',
+      '```bash',
+      'mkdir -p /tmp/goldbot-sachs && cd /tmp/goldbot-sachs',
+      'npm init -y && npm install viem',
+      '```',
+      '',
+      '## Deposit USDC',
+      '',
+      '```typescript',
+      "import { createWalletClient, createPublicClient, http, parseUnits } from 'viem'",
+      "import { base } from 'viem/chains'",
+      "import { privateKeyToAccount } from 'viem/accounts'",
+      '',
+      "const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'",
+      "const CLAW_USDC = 'TBD' // clawUSDC vault — check goldbotsachs.com for deployed address",
+      "const REFERRER = '{{REFERRER}}'",
+      '',
+      'const account = privateKeyToAccount(YOUR_PRIVATE_KEY)',
+      'const walletClient = createWalletClient({ account, chain: base, transport: http() })',
+      '',
+      "const amount = parseUnits('100', 6) // 100 USDC",
+      '',
+      '// 1. Approve',
+      'await walletClient.writeContract({',
+      '  address: USDC,',
+      "  abi: [{ type: 'function', name: 'approve', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],",
+      "  functionName: 'approve',",
+      '  args: [CLAW_USDC, amount]',
+      '})',
+      '',
+      '// 2. Deposit with referral',
+      'await walletClient.writeContract({',
+      '  address: CLAW_USDC,',
+      '  abi: [{',
+      "    type: 'function', name: 'deposit',",
+      '    inputs: [',
+      "      { name: 'assets', type: 'uint256' },",
+      "      { name: 'receiver', type: 'address' },",
+      "      { name: 'referrer', type: 'address' }",
+      '    ],',
+      "    outputs: [{ type: 'uint256' }],",
+      "    stateMutability: 'nonpayable'",
+      '  }],',
+      "  functionName: 'deposit',",
+      '  args: [amount, account.address, REFERRER]',
+      '})',
+      '```',
+      '',
+      '## Check balance',
+      '',
+      '```typescript',
+      'const publicClient = createPublicClient({ chain: base, transport: http() })',
+      '',
+      '// Shares held',
+      'const shares = await publicClient.readContract({',
+      '  address: CLAW_USDC,',
+      "  abi: [{ type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],",
+      "  functionName: 'balanceOf',",
+      '  args: [account.address]',
+      '})',
+      '',
+      '// USDC value',
+      'const assets = await publicClient.readContract({',
+      '  address: CLAW_USDC,',
+      "  abi: [{ type: 'function', name: 'convertToAssets', inputs: [{ name: 'shares', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],",
+      "  functionName: 'convertToAssets',",
+      '  args: [shares]',
+      '})',
+      '```',
+      '',
+      '## Withdraw',
+      '',
+      '```typescript',
+      'await walletClient.writeContract({',
+      '  address: CLAW_USDC,',
+      "  abi: [{ type: 'function', name: 'redeem', inputs: [{ name: 'shares', type: 'uint256' }, { name: 'receiver', type: 'address' }, { name: 'owner', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'nonpayable' }],",
+      "  functionName: 'redeem',",
+      '  args: [shares, account.address, account.address]',
+      '})',
+      '```',
+      '',
+      'Instant. No lockup. No penalties.',
+      '',
+      '## Claim referral yield',
+      '',
+      '```typescript',
+      'await walletClient.writeContract({',
+      '  address: CLAW_USDC,',
+      "  abi: [{ type: 'function', name: 'claim', inputs: [], outputs: [], stateMutability: 'nonpayable' }],",
+      "  functionName: 'claim'",
+      '})',
+      '```',
+      '',
+      '## Source',
+      '',
+      'https://github.com/publu/goldbotsachs',
+    ].join('\n');
+
+    function isValidAddress(addr) {
+      return /^0x[0-9a-fA-F]{40}$/.test(addr);
+    }
+
+    function truncateAddress(addr) {
+      return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
+    }
+
+    function getSkillContent(referrer) {
+      return SKILL_TEMPLATE.replace(/\{\{REFERRER\}\}/g, referrer);
+    }
+
+    function copySkill() {
+      var content = getSkillContent(window._referrer);
+      navigator.clipboard.writeText(content);
+      var hint = document.getElementById('copy-hint');
+      hint.textContent = 'copied!';
+      hint.classList.add('copied');
+      setTimeout(function() {
+        hint.textContent = 'click to copy';
+        hint.classList.remove('copied');
+      }, 2000);
+    }
+
+    var path = window.location.pathname;
+    var match = path.match(/^\/r\/(0x[0-9a-fA-F]{40})\/?$/);
+
+    if (match && isValidAddress(match[1])) {
+      window._referrer = match[1];
+      document.getElementById('referral-page').style.display = 'flex';
+      document.getElementById('referrer-display').textContent = truncateAddress(match[1]);
+      document.getElementById('skill-preview').textContent =
+        'goldbot-sachs.md \u2014 ' + truncateAddress(match[1]);
+      document.title = 'Goldbot Sachs \u2014 Invited by ' + truncateAddress(match[1]);
+    } else {
+      document.getElementById('not-found-page').style.display = 'flex';
+    }
+  </script>
+
+</body>
+</html>
