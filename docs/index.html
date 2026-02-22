@@ -169,40 +169,43 @@
     /* ─── Install ─── */
     .install-block {
       background: var(--bg-card); border: 1px solid var(--border);
-      max-width: 600px;
+      max-width: 640px; margin: 0 auto; cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
     }
+    .install-block:hover {
+      border-color: var(--gs-gold);
+      box-shadow: 0 0 0 1px var(--gs-gold), 0 8px 32px rgba(201, 168, 76, 0.08);
+    }
+    .install-block:active { transform: scale(0.995); }
 
     .install-header {
       padding: 14px 24px; border-bottom: 1px solid var(--border);
       font-family: var(--mono); font-size: 12px; color: var(--text-muted);
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; justify-content: space-between;
     }
 
+    .install-header-left { display: flex; align-items: center; gap: 8px; }
     .install-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+    .copy-hint {
+      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .install-block:hover .copy-hint { color: var(--gs-gold); }
+    .copy-hint.copied { color: var(--green); }
 
     .install-body {
       padding: 24px; font-family: var(--mono); font-size: 14px;
-      line-height: 2.2; color: var(--text-secondary); white-space: pre;
+      line-height: 2.2; color: var(--text-secondary); white-space: nowrap;
+      overflow-x: auto; text-align: center;
     }
 
-    .install-body .cmd { color: var(--gs-blue); }
     .install-body .path { color: var(--gs-gold); }
 
-    .install-url {
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      white-space: nowrap; overflow-x: auto;
-    }
-
-    .copy-btn {
-      background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-      font-family: var(--mono); font-size: 11px; padding: 4px 10px; cursor: pointer;
-      transition: all 0.2s; flex-shrink: 0;
-    }
-    .copy-btn:hover { color: var(--text-secondary); border-color: var(--text-muted); }
-    .copy-btn.copied { color: var(--green); border-color: var(--green); }
-
     .discovery-note {
-      margin-top: 20px; font-family: var(--mono); font-size: 13px; color: var(--text-muted);
+      margin-top: 16px; font-family: var(--mono); font-size: 12px; color: var(--text-muted);
+      text-align: center;
     }
     .discovery-note a { color: var(--gs-blue); text-decoration: none; }
     .discovery-note a:hover { text-decoration: underline; }
@@ -282,6 +285,7 @@
         <span class="logo-text">Goldbot Sachs</span>
       </a>
       <nav>
+        <a href="#install">Get Started</a>
         <a href="https://github.com/publu/goldbotsachs">GitHub</a>
       </nav>
     </div>
@@ -292,10 +296,23 @@
     <h1>Your agent's money<br>should be <em>making money</em></h1>
     <p class="hero-sub">
       Non-custodial yield for autonomous agents on Base.
-      Install the skill. Deposit USDC. Earn while you work.
+      Drop in the skill. Deposit USDC. Earn while you work.
     </p>
-    <a href="#install" class="hero-cta">Get Started</a>
-    <p style="margin-top:20px;font-family:var(--mono);font-size:12px;color:var(--text-muted);">Works best with <span style="color:var(--text-secondary);">Conway</span> or any <span style="color:var(--text-secondary);">Claw</span> setup with a wallet</p>
+
+    <!-- ─── Get Started (inline) ─── -->
+    <div class="install-block" id="install" onclick="copySkillUrl(this)">
+      <div class="install-header">
+        <span class="install-header-left"><span class="dot"></span> skill url</span>
+        <span class="copy-hint" id="copy-hint">click to copy</span>
+      </div>
+      <div class="install-body">
+        <span class="path" id="skill-url">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
+      </div>
+    </div>
+    <p class="discovery-note">
+      Or auto-discover via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
+    </p>
+    <p style="margin-top:20px;font-family:var(--mono);font-size:12px;color:var(--text-muted);">Works best with <a href="https://conway.tech" style="color:var(--text-secondary);text-decoration:none;">Conway</a> or any <a href="https://github.com/royalaid/clawfi" style="color:var(--text-secondary);text-decoration:none;">Claw</a> setup with a wallet</p>
   </section>
 
   <!-- ─── Stats ─── -->
@@ -407,34 +424,14 @@
     </div>
   </div>
 
-  <!-- ─── Get Started ─── -->
-  <section class="section" id="install">
-    <div class="section-label">Get started</div>
-    <h2>One skill file. That's it.</h2>
-    <p class="section-desc">
-      Point your agent at the skill URL. It handles deposits, yield tracking, and withdrawals.
-    </p>
-    <div class="install-block">
-      <div class="install-header">
-        <span class="dot"></span>
-        skill url
-      </div>
-      <div class="install-body install-url">
-        <span class="path" id="skill-url">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
-        <button class="copy-btn" onclick="copyUrl(this)">copy</button>
-      </div>
-    </div>
-    <p class="discovery-note">
-      Auto-discovery via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
-    </p>
-  </section>
-
   <script>
-    function copyUrl(btn) {
-      navigator.clipboard.writeText(document.getElementById('skill-url').textContent);
-      btn.textContent = 'copied';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+    function copySkillUrl(block) {
+      var url = document.getElementById('skill-url').textContent;
+      navigator.clipboard.writeText(url);
+      var hint = document.getElementById('copy-hint');
+      hint.textContent = 'copied!';
+      hint.classList.add('copied');
+      setTimeout(function() { hint.textContent = 'click to copy'; hint.classList.remove('copied'); }, 2000);
     }
   </script>
 
