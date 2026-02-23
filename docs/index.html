@@ -201,36 +201,59 @@
 
     .feature p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
 
-    /* ─── Referral ─── */
+    /* ─── Referral (with Three.js background) ─── */
     .referral-section {
       border-top: 1px solid var(--border);
-      background: var(--bg-secondary);
+      position: relative;
+      overflow: hidden;
+      min-height: 700px;
     }
 
-    .referral-inner {
-      max-width: 1100px; margin: 0 auto; padding: 80px 40px;
+    .referral-canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    .referral-content {
+      position: relative; z-index: 10;
+      max-width: 1100px; margin: 0 auto; padding: 100px 40px;
       text-align: center;
     }
 
-    .referral-inner h2 {
-      font-family: var(--serif); font-size: 40px; font-weight: 400;
-      letter-spacing: -0.5px; margin-bottom: 16px;
+    .referral-content .section-label {
+      opacity: 0.8;
     }
 
-    .referral-inner h2 em { font-style: italic; color: var(--gs-gold); }
+    .referral-content h2 {
+      font-family: var(--serif); font-size: 48px; font-weight: 400;
+      letter-spacing: -0.5px; margin-bottom: 16px;
+      text-shadow: 0 0 60px rgba(10,10,15,0.95);
+    }
+
+    .referral-content h2 em { font-style: italic; color: var(--gs-gold); }
+
+    .referral-tagline {
+      font-family: var(--mono); font-size: 14px; color: var(--gs-gold);
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 32px;
+      text-shadow: 0 0 40px rgba(10,10,15,0.95);
+    }
 
     .referral-desc {
       font-size: 17px; color: var(--text-secondary); line-height: 1.8;
-      max-width: 560px; margin: 0 auto 40px;
+      max-width: 520px; margin: 0 auto 48px;
+      text-shadow: 0 0 40px rgba(10,10,15,0.95);
     }
 
     .referral-steps {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-      max-width: 800px; margin: 0 auto;
+      max-width: 800px; margin: 0 auto 40px;
     }
 
     .referral-step {
-      text-align: center; padding: 24px;
+      text-align: center; padding: 28px;
+      background: rgba(22, 22, 31, 0.85);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
     }
 
     .referral-step-num {
@@ -248,8 +271,9 @@
     }
 
     .referral-link-example {
-      margin-top: 32px; font-family: var(--mono); font-size: 14px;
+      margin-top: 8px; font-family: var(--mono); font-size: 14px;
       color: var(--text-muted);
+      text-shadow: 0 0 40px rgba(10,10,15,0.95);
     }
 
     .referral-link-example span { color: var(--gs-gold); }
@@ -307,7 +331,8 @@
       .section { padding: 60px 24px; }
       .steps { grid-template-columns: 1fr; }
       .features { grid-template-columns: 1fr; }
-      .referral-inner { padding: 60px 24px; }
+      .referral-content { padding: 60px 24px; }
+      .referral-content h2 { font-size: 36px; }
       .referral-steps { grid-template-columns: 1fr; }
       .header-inner { padding: 16px 24px; }
       .logo-text { display: none; }
@@ -435,30 +460,33 @@
     </div>
   </section>
 
-  <!-- ─── Referral ─── -->
+  <!-- ─── Referral (Three.js background) ─── -->
   <div class="referral-section" id="referral">
-    <div class="referral-inner">
-      <div class="section-label" style="opacity:0.8;">Referrals</div>
-      <h2>Earn more by <em>growing the network</em></h2>
+    <canvas class="referral-canvas" id="referral-canvas"></canvas>
+    <div class="referral-content">
+      <div class="section-label">Referrals</div>
+      <h2>Money making <em>money</em><br>making <em>money</em></h2>
+      <div class="referral-tagline">your network is your yield</div>
       <p class="referral-desc">
-        Every depositor gets a unique referral link. When another agent deposits through your link,
-        you earn a share of the yield their deposits generate. On-chain. Automatic. Forever.
+        Register as a referrer. Share your link with other agents.
+        Every deposit they make earns you a cut of the yield &mdash;
+        automatically, on-chain, forever. No cap. No expiration.
       </p>
       <div class="referral-steps">
         <div class="referral-step">
           <div class="referral-step-num">01</div>
-          <div class="referral-step-title">Deposit</div>
-          <div class="referral-step-desc">Deposit USDC into clawUSDC. You're now earning yield.</div>
+          <div class="referral-step-title">Register</div>
+          <div class="referral-step-desc">Deposit $1+ and call <code style="font-family:var(--mono);font-size:12px;color:var(--gs-blue);background:var(--bg-primary);padding:2px 6px;border:1px solid var(--border);">registerAsReferrer()</code>. One transaction. Permanent.</div>
         </div>
         <div class="referral-step">
           <div class="referral-step-num">02</div>
-          <div class="referral-step-title">Share</div>
-          <div class="referral-step-desc">Share your link. The referred agent gets a personalized skill file with your address built in.</div>
+          <div class="referral-step-title">Spread</div>
+          <div class="referral-step-desc">Share your referral link. Every agent that deposits through it is permanently linked to you.</div>
         </div>
         <div class="referral-step">
           <div class="referral-step-num">03</div>
-          <div class="referral-step-title">Earn</div>
-          <div class="referral-step-desc">When they deposit, your referral is recorded on-chain. You earn referral yield automatically.</div>
+          <div class="referral-step-title">Compound</div>
+          <div class="referral-step-desc">5% of their yield flows to you. They refer others, those referrals cascade up. The tree pays you.</div>
         </div>
       </div>
       <p class="referral-link-example">
@@ -520,6 +548,196 @@
         }
       })
       .catch(function() {});
+  </script>
+
+  <!-- ─── Three.js Referral Visualization ─── -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+    const canvas = document.getElementById('referral-canvas');
+    const section = canvas.parentElement;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setClearColor(0x0A0A0F, 1);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0A0A0F, 0.028);
+
+    const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
+    camera.position.set(0, 3, 30);
+    camera.lookAt(0, -1, 0);
+
+    const GOLD = new THREE.Color(0xC9A84C);
+    const GOLD_LIGHT = new THREE.Color(0xD4B86A);
+    const BLUE = new THREE.Color(0x7297C5);
+    const DIM = new THREE.Color(0x333340);
+
+    // ─── Build pyramid tree ───
+    const nodes = [];
+    const edges = [];
+    const levels = 6;
+    const spreadX = 3.0;
+    const spreadY = 3.2;
+    const levelStarts = [];
+    let idx = 0;
+
+    for (let level = 0; level < levels; level++) {
+      levelStarts.push(idx);
+      const count = Math.pow(2, level);
+      const totalWidth = (count - 1) * spreadX;
+      for (let i = 0; i < count; i++) {
+        const x = -totalWidth / 2 + i * spreadX;
+        const y = (levels / 2 - level) * spreadY - 2;
+        const z = (Math.random() - 0.5) * 1.5;
+        nodes.push({ pos: new THREE.Vector3(x, y, z), level, index: i, id: idx });
+        if (level > 0) {
+          const parentId = levelStarts[level - 1] + Math.floor(i / 2);
+          edges.push({ from: parentId, to: idx });
+        }
+        idx++;
+      }
+    }
+
+    // ─── Node meshes ───
+    const nodeGeo = new THREE.SphereGeometry(0.2, 12, 12);
+    const rootGeo = new THREE.SphereGeometry(0.35, 16, 16);
+
+    nodes.forEach((n) => {
+      const isRoot = n.level === 0;
+      const color = isRoot ? GOLD : (n.level <= 2 ? GOLD_LIGHT : BLUE);
+      const opacity = isRoot ? 1.0 : Math.max(0.25, 1.0 - n.level * 0.13);
+
+      const mesh = new THREE.Mesh(
+        isRoot ? rootGeo : nodeGeo,
+        new THREE.MeshBasicMaterial({ color, transparent: true, opacity })
+      );
+      mesh.position.copy(n.pos);
+      scene.add(mesh);
+
+      const glowSize = isRoot ? 0.8 : 0.4;
+      const glow = new THREE.Mesh(
+        new THREE.SphereGeometry(glowSize, 12, 12),
+        new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: isRoot ? 0.12 : 0.04 })
+      );
+      glow.position.copy(n.pos);
+      scene.add(glow);
+
+      n.mesh = mesh;
+      n.glow = glow;
+    });
+
+    // ─── Edge lines ───
+    edges.forEach(e => {
+      const pts = [nodes[e.from].pos, nodes[e.to].pos];
+      const line = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(pts),
+        new THREE.LineBasicMaterial({ color: DIM, transparent: true, opacity: 0.2 })
+      );
+      scene.add(line);
+      e.line = line;
+    });
+
+    // ─── Yield particles ───
+    const particles = [];
+    const pGeo = new THREE.SphereGeometry(0.06, 6, 6);
+
+    function spawnParticle() {
+      const edge = edges[Math.floor(Math.random() * edges.length)];
+      const from = nodes[edge.to].pos;
+      const to = nodes[edge.from].pos;
+      const mesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.9 }));
+      mesh.position.copy(from);
+      scene.add(mesh);
+      particles.push({ mesh, from: from.clone(), to: to.clone(), t: 0, speed: 0.25 + Math.random() * 0.35, edgeRef: edge });
+    }
+
+    // ─── Ambient dust ───
+    const dustN = 120;
+    const dPos = new Float32Array(dustN * 3);
+    for (let i = 0; i < dustN; i++) {
+      dPos[i*3] = (Math.random()-0.5)*50;
+      dPos[i*3+1] = (Math.random()-0.5)*35;
+      dPos[i*3+2] = (Math.random()-0.5)*20;
+    }
+    const dustGeo = new THREE.BufferGeometry();
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
+    const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x444455, size: 0.04, transparent: true, opacity: 0.4 }));
+    scene.add(dust);
+
+    // ─── Resize ───
+    function resize() {
+      const w = section.clientWidth;
+      const h = section.clientHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // ─── Intersection observer — only animate when visible ───
+    let isVisible = false;
+    const observer = new IntersectionObserver(entries => {
+      isVisible = entries[0].isIntersecting;
+    }, { threshold: 0.05 });
+    observer.observe(section);
+
+    // ─── Render loop ───
+    const clock = new THREE.Clock();
+    let spawnTimer = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!isVisible) return;
+
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const t = clock.getElapsedTime();
+
+      camera.position.x = Math.sin(t * 0.08) * 2.5;
+      camera.position.y = 3 + Math.sin(t * 0.06) * 1.2;
+      camera.lookAt(0, -1, 0);
+
+      spawnTimer += dt;
+      if (spawnTimer > 0.1) { spawnParticle(); spawnTimer = 0; }
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.t += dt * p.speed;
+        if (p.t >= 1) {
+          scene.remove(p.mesh);
+          p.mesh.geometry.dispose();
+          p.mesh.material.dispose();
+          particles.splice(i, 1);
+          continue;
+        }
+        const ease = p.t * p.t * (3 - 2 * p.t);
+        p.mesh.position.lerpVectors(p.from, p.to, ease);
+        p.mesh.material.opacity = Math.sin(p.t * Math.PI) * 0.85;
+        p.mesh.scale.setScalar(0.8 + Math.sin(p.t * Math.PI) * 0.5);
+      }
+
+      nodes.forEach((n, i) => {
+        const pulse = Math.sin(t * 1.8 + i * 0.4) * 0.5 + 0.5;
+        n.glow.material.opacity = (n.level === 0 ? 0.08 : 0.02) + pulse * 0.05;
+        n.mesh.position.y = n.pos.y + Math.sin(t * 0.4 + i * 0.25) * 0.06;
+        n.glow.position.y = n.mesh.position.y;
+      });
+
+      dust.rotation.y += dt * 0.008;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
   </script>
 
   <!-- ─── Footer ─── -->
