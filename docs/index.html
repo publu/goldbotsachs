@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Goldbot Sachs — Yield for AI Agents</title>
-  <meta name="description" content="Your agent's idle USDC should be earning. Deposit into clawUSDC, earn yield automatically, withdraw anytime. Refer other agents to earn even more.">
+  <meta name="description" content="Your agent's idle USDC should be earning. Deposit into clawUSDC, earn yield automatically, withdraw anytime.">
 
   <link rel="alternate" type="application/json" href="/.well-known/agent-card.json">
 
@@ -42,7 +42,7 @@
     /* ─── Header ─── */
     header {
       position: fixed; top: 0; width: 100%; z-index: 100;
-      background: rgba(10, 10, 15, 0.9);
+      background: rgba(10, 10, 15, 0.85);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
     }
@@ -64,9 +64,21 @@
     }
     nav a:hover { color: var(--text-secondary); border-color: var(--border); }
 
-    /* ─── Hero ─── */
+    /* ─── Hero (with Three.js background) ─── */
+    .hero-wrapper {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .hero-canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+    }
+
     .hero {
-      padding: 180px 40px 60px;
+      position: relative; z-index: 10;
+      padding: 200px 40px 100px;
       max-width: 1100px; margin: 0 auto;
       text-align: center;
     }
@@ -74,19 +86,22 @@
     .hero h1 {
       font-family: var(--serif); font-size: 64px; font-weight: 400;
       line-height: 1.15; letter-spacing: -1px; margin-bottom: 28px;
+      text-shadow: 0 0 80px rgba(10,10,15,0.95);
     }
     .hero h1 em { font-style: italic; color: var(--gs-gold); }
 
     .hero-sub {
       font-size: 20px; font-weight: 300; color: var(--text-secondary);
       line-height: 1.7; max-width: 520px; margin: 0 auto 48px;
+      text-shadow: 0 0 60px rgba(10,10,15,0.95);
     }
 
-    /* ─── Install block (reusable) ─── */
+    /* ─── Install block ─── */
     .install-block {
-      background: var(--bg-card); border: 1px solid var(--border);
+      background: rgba(22, 22, 31, 0.9); border: 1px solid var(--border);
       max-width: 640px; margin: 0 auto; cursor: pointer;
       transition: all 0.25s ease; position: relative;
+      backdrop-filter: blur(12px);
     }
     .install-block:hover {
       border-color: var(--gs-gold);
@@ -121,35 +136,26 @@
     .install-note {
       margin-top: 16px; font-family: var(--mono); font-size: 12px; color: var(--text-muted);
       text-align: center;
+      text-shadow: 0 0 40px rgba(10,10,15,0.95);
     }
     .install-note a { color: var(--gs-blue); text-decoration: none; }
     .install-note a:hover { text-decoration: underline; }
 
-    /* ─── Problem ─── */
-    .problem {
-      border-top: 1px solid var(--border);
+    /* ─── Stats ─── */
+    .stats-bar {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
       background: var(--bg-secondary);
     }
-
-    .problem-inner {
-      max-width: 1100px; margin: 0 auto; padding: 80px 40px;
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px;
+    .stats-inner {
+      max-width: 1100px; margin: 0 auto; padding: 36px 40px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
     }
-
-    .pain-point { text-align: center; }
-
-    .pain-icon {
-      font-family: var(--mono); font-size: 32px; margin-bottom: 16px;
-      color: var(--gs-gold); opacity: 0.6;
-    }
-
-    .pain-point h3 {
-      font-family: var(--sans); font-size: 17px; font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .pain-point p {
-      font-size: 15px; color: var(--text-muted); line-height: 1.7;
+    .stat { text-align: center; }
+    .stat-value { font-family: var(--mono); font-size: 28px; font-weight: 500; }
+    .stat-value .accent { color: var(--gs-gold); }
+    .stat-label {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 6px;
     }
 
     /* ─── Sections ─── */
@@ -191,23 +197,6 @@
 
     .step p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
 
-    /* ─── Stats ─── */
-    .stats-bar {
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      background: var(--bg-secondary);
-    }
-    .stats-inner {
-      max-width: 1100px; margin: 0 auto; padding: 36px 40px;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
-    }
-    .stat { text-align: center; }
-    .stat-value { font-family: var(--mono); font-size: 28px; font-weight: 500; }
-    .stat-value .accent { color: var(--gs-gold); }
-    .stat-label {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--text-muted); margin-top: 6px;
-    }
-
     /* ─── Features ─── */
     .features {
       display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
@@ -223,79 +212,6 @@
     }
 
     .feature p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
-
-    /* ─── Referral (with Three.js background) ─── */
-    .referral-section {
-      border-top: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      min-height: 720px;
-    }
-
-    .referral-canvas {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 0;
-    }
-
-    .referral-content {
-      position: relative; z-index: 10;
-      max-width: 1100px; margin: 0 auto; padding: 100px 40px;
-      text-align: center;
-    }
-
-    .referral-content h2 {
-      font-family: var(--serif); font-size: 48px; font-weight: 400;
-      letter-spacing: -0.5px; margin-bottom: 16px;
-      text-shadow: 0 0 60px rgba(10,10,15,0.95);
-    }
-
-    .referral-content h2 em { font-style: italic; color: var(--gs-gold); }
-
-    .referral-tagline {
-      font-family: var(--mono); font-size: 14px; color: var(--gs-gold);
-      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 32px;
-      text-shadow: 0 0 40px rgba(10,10,15,0.95);
-    }
-
-    .referral-desc {
-      font-size: 17px; color: var(--text-secondary); line-height: 1.8;
-      max-width: 520px; margin: 0 auto 48px;
-      text-shadow: 0 0 40px rgba(10,10,15,0.95);
-    }
-
-    .referral-steps {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-      max-width: 800px; margin: 0 auto 40px;
-    }
-
-    .referral-step {
-      text-align: center; padding: 28px;
-      background: rgba(22, 22, 31, 0.85);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(8px);
-    }
-
-    .referral-step-num {
-      font-family: var(--mono); font-size: 13px; color: var(--gs-gold);
-      margin-bottom: 8px;
-    }
-
-    .referral-step-title {
-      font-family: var(--sans); font-size: 15px; font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .referral-step-desc {
-      font-size: 14px; color: var(--text-muted); line-height: 1.6;
-    }
-
-    .referral-link-example {
-      margin-top: 8px; font-family: var(--mono); font-size: 14px;
-      color: var(--text-muted);
-      text-shadow: 0 0 40px rgba(10,10,15,0.95);
-    }
-
-    .referral-link-example span { color: var(--gs-gold); }
 
     /* ─── Powered By ─── */
     .powered-section {
@@ -315,23 +231,6 @@
     }
 
     .powered-desc { font-size: 13px; color: var(--text-muted); }
-
-    /* ─── Final CTA ─── */
-    .final-cta {
-      max-width: 1100px; margin: 0 auto; padding: 100px 40px;
-      text-align: center;
-    }
-
-    .final-cta h2 {
-      font-family: var(--serif); font-size: 36px; font-weight: 400;
-      letter-spacing: -0.5px; margin-bottom: 12px;
-    }
-
-    .final-cta h2 em { font-style: italic; color: var(--gs-gold); }
-
-    .final-cta p {
-      font-size: 16px; color: var(--text-muted); margin-bottom: 40px;
-    }
 
     /* ─── Footer ─── */
     footer {
@@ -359,20 +258,14 @@
 
     /* ─── Responsive ─── */
     @media (max-width: 768px) {
-      .hero { padding: 140px 24px 48px; }
-      .hero h1 { font-size: 40px; }
+      .hero { padding: 160px 24px 60px; }
+      .hero h1 { font-size: 38px; }
       .hero-sub { font-size: 17px; }
-      .problem-inner { grid-template-columns: 1fr; gap: 32px; padding: 60px 24px; }
       .stats-inner { grid-template-columns: repeat(2, 1fr); padding: 24px; }
       .stat-value { font-size: 22px; }
       .section { padding: 60px 24px; }
       .steps { grid-template-columns: 1fr; }
       .features { grid-template-columns: 1fr; }
-      .referral-content { padding: 60px 24px; }
-      .referral-content h2 { font-size: 36px; }
-      .referral-steps { grid-template-columns: 1fr; }
-      .final-cta { padding: 60px 24px; }
-      .final-cta h2 { font-size: 28px; }
       .header-inner { padding: 16px 24px; }
       .logo-text { display: none; }
       .powered-grid { gap: 32px; }
@@ -391,56 +284,60 @@
       </a>
       <nav>
         <a href="#how">How it works</a>
-        <a href="#referral">Referrals</a>
         <a href="https://github.com/publu/goldbotsachs">GitHub</a>
       </nav>
     </div>
   </header>
 
-  <!-- ═══ 1. HERO — Attention ═══ -->
-  <section class="hero">
-    <h1>Your agent's money<br>should be <em>making money</em></h1>
-    <p class="hero-sub">
-      Idle USDC is dead money. One skill file turns your agent into a yield-earning machine.
-    </p>
+  <!-- ═══ HERO + Three.js ═══ -->
+  <div class="hero-wrapper">
+    <canvas class="hero-canvas" id="hero-canvas"></canvas>
+    <section class="hero">
+      <h1>Your agent's money<br>should be <em>making money</em></h1>
+      <p class="hero-sub">
+        Idle USDC is dead money. One skill file turns your agent
+        into a yield-earning machine.
+      </p>
 
-    <div class="install-block" onclick="copySkillUrl(this)">
-      <div class="install-header">
-        <span class="install-header-left"><span class="dot"></span> skill url</span>
-        <span class="copy-hint" id="copy-hint">click to copy</span>
+      <div class="install-block" onclick="copySkillUrl(this)">
+        <div class="install-header">
+          <span class="install-header-left"><span class="dot"></span> skill url</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+        <div class="install-body">
+          <span class="path">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
+        </div>
       </div>
-      <div class="install-body">
-        <span class="path" id="skill-url">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
-      </div>
-    </div>
-    <p class="install-note">
-      Point your agent at this URL or drop it in your skills directory.<br>
-      Auto-discover via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
-    </p>
-  </section>
+      <p class="install-note">
+        Point your agent at this URL or drop it in your skills directory.<br>
+        Auto-discover via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
+      </p>
+    </section>
+  </div>
 
-  <!-- ═══ 2. PROBLEM — Agitate ═══ -->
-  <div class="problem">
-    <div class="problem-inner">
-      <div class="pain-point">
-        <div class="pain-icon">$</div>
-        <h3>USDC sits idle between jobs</h3>
-        <p>Your agent earns from tasks, payments, and x402 calls. Between transactions, that capital does nothing.</p>
+  <!-- ═══ STATS ═══ -->
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat">
+        <div class="stat-value" id="apy-value">~4<span class="accent">%</span></div>
+        <div class="stat-label">APY</div>
       </div>
-      <div class="pain-point">
-        <div class="pain-icon">&#9719;</div>
-        <h3>Yield doesn't wait</h3>
-        <p>Every hour your USDC isn't deposited is yield you'll never get back. It compounds against you.</p>
+      <div class="stat">
+        <div class="stat-value">&lt;$0<span class="accent">.01</span></div>
+        <div class="stat-label">Per transaction</div>
       </div>
-      <div class="pain-point">
-        <div class="pain-icon">&#8633;</div>
-        <h3>Manual DeFi doesn't scale</h3>
-        <p>You're not going to monitor vaults and harvest rewards for every agent you run. It needs to be autonomous.</p>
+      <div class="stat">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Lockup period</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">5<span class="accent">%</span></div>
+        <div class="stat-label">Referral yield</div>
       </div>
     </div>
   </div>
 
-  <!-- ═══ 3. HOW IT WORKS — Solution ═══ -->
+  <!-- ═══ HOW IT WORKS ═══ -->
   <section class="section" id="how">
     <div class="section-label">How it works</div>
     <h2>Three steps. Under a cent.</h2>
@@ -466,29 +363,7 @@
     </div>
   </section>
 
-  <!-- ═══ 4. STATS — Proof ═══ -->
-  <div class="stats-bar">
-    <div class="stats-inner">
-      <div class="stat">
-        <div class="stat-value" id="apy-value">~4<span class="accent">%</span></div>
-        <div class="stat-label">APY</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">&lt;$0<span class="accent">.01</span></div>
-        <div class="stat-label">Per transaction</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">0</div>
-        <div class="stat-label">Lockup period</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">5<span class="accent">%</span></div>
-        <div class="stat-label">Referral yield</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ 5. FEATURES — Desire ═══ -->
+  <!-- ═══ FEATURES ═══ -->
   <section class="section">
     <div class="section-label">Built for agents</div>
     <h2>Not another DeFi dashboard.<br>A skill your agent runs itself.</h2>
@@ -506,52 +381,17 @@
         <p>USDC stays in the vault earning yield until your agent needs it. Withdraw and pay in one flow &mdash; x402 compatible.</p>
       </div>
       <div class="feature">
-        <h3>Fully on-chain. Fully open source.</h3>
-        <p>clawUSDC is a single ERC-4626 vault on Base. No backend. No API keys. No custody. Read the code, verify everything.</p>
+        <h3>Refer agents, earn on their yield</h3>
+        <p>Every depositor can become a referrer. Share your link, and when other agents deposit through it, 5% of their yield flows to you. On-chain. Automatic.</p>
       </div>
       <div class="feature">
-        <h3>Non-custodial. Always.</h3>
-        <p>Your agent's wallet, your agent's funds. Deposit and withdraw permissionlessly. Nobody can freeze, lock, or redirect your USDC.</p>
+        <h3>One contract. No server. No custody.</h3>
+        <p>clawUSDC is a single ERC-4626 vault on Base. Open source. Non-custodial. Your agent's wallet, your agent's funds. Always.</p>
       </div>
     </div>
   </section>
 
-  <!-- ═══ 6. REFERRAL — Growth / Action (Three.js) ═══ -->
-  <div class="referral-section" id="referral">
-    <canvas class="referral-canvas" id="referral-canvas"></canvas>
-    <div class="referral-content">
-      <div class="section-label">Referrals</div>
-      <h2>Money making <em>money</em><br>making <em>money</em></h2>
-      <div class="referral-tagline">your network is your yield</div>
-      <p class="referral-desc">
-        Register as a referrer. Share your link with other agents.
-        Every deposit they make earns you a cut of the yield &mdash;
-        on-chain, automatic, forever. No cap. No expiration.
-      </p>
-      <div class="referral-steps">
-        <div class="referral-step">
-          <div class="referral-step-num">01</div>
-          <div class="referral-step-title">Register</div>
-          <div class="referral-step-desc">Deposit $1+ and call <code style="font-family:var(--mono);font-size:12px;color:var(--gs-blue);background:var(--bg-primary);padding:2px 6px;border:1px solid var(--border);">registerAsReferrer()</code>. One transaction. Permanent.</div>
-        </div>
-        <div class="referral-step">
-          <div class="referral-step-num">02</div>
-          <div class="referral-step-title">Spread</div>
-          <div class="referral-step-desc">Share your referral link. Every agent that deposits through it is permanently linked to you.</div>
-        </div>
-        <div class="referral-step">
-          <div class="referral-step-num">03</div>
-          <div class="referral-step-title">Compound</div>
-          <div class="referral-step-desc">5% of their yield flows to you. They refer others, those referrals cascade up. The tree pays you.</div>
-        </div>
-      </div>
-      <p class="referral-link-example">
-        <span>goldbotsachs.com/r/</span>YOUR_WALLET_ADDRESS
-      </p>
-    </div>
-  </div>
-
-  <!-- ═══ 7. TRUST — Powered By ═══ -->
+  <!-- ═══ POWERED BY ═══ -->
   <div class="powered-section">
     <div class="section" style="padding: 60px 40px;">
       <div class="powered-grid">
@@ -583,21 +423,6 @@
     </div>
   </div>
 
-  <!-- ═══ 8. FINAL CTA — Close ═══ -->
-  <section class="final-cta">
-    <h2>Stop leaving yield on the table.<br><em>Give your agent the skill.</em></h2>
-    <p>One URL. Instant setup. Your agent handles the rest.</p>
-    <div class="install-block" onclick="copySkillUrl(this)" style="max-width:640px;margin:0 auto;">
-      <div class="install-header">
-        <span class="install-header-left"><span class="dot"></span> skill url</span>
-        <span class="copy-hint" id="copy-hint-2">click to copy</span>
-      </div>
-      <div class="install-body">
-        <span class="path">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
-      </div>
-    </div>
-  </section>
-
   <!-- ═══ Scripts ═══ -->
   <script>
     function copySkillUrl(block) {
@@ -611,7 +436,6 @@
       });
     }
 
-    // Live APY from Beefy
     fetch('https://api.beefy.finance/apy')
       .then(function(r) { return r.json(); })
       .then(function(data) {
@@ -624,7 +448,7 @@
       .catch(function() {});
   </script>
 
-  <!-- ═══ Three.js Referral Visualization ═══ -->
+  <!-- ═══ Three.js Hero Background ═══ -->
   <script type="importmap">
   {
     "imports": {
@@ -636,30 +460,31 @@
   <script type="module">
     import * as THREE from 'three';
 
-    const canvas = document.getElementById('referral-canvas');
-    const section = canvas.parentElement;
+    const canvas = document.getElementById('hero-canvas');
+    const wrapper = canvas.parentElement;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setClearColor(0x0A0A0F, 1);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0A0A0F, 0.028);
+    scene.fog = new THREE.FogExp2(0x0A0A0F, 0.022);
 
     const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
-    camera.position.set(0, 3, 30);
-    camera.lookAt(0, -1, 0);
+    camera.position.set(0, 5, 35);
+    camera.lookAt(0, 0, 0);
 
     const GOLD = new THREE.Color(0xC9A84C);
     const GOLD_LIGHT = new THREE.Color(0xD4B86A);
     const BLUE = new THREE.Color(0x7297C5);
     const DIM = new THREE.Color(0x333340);
 
+    // ─── Build pyramid tree ───
     const nodes = [];
     const edges = [];
-    const levels = 6;
-    const spreadX = 3.0;
-    const spreadY = 3.2;
+    const levels = 7;
+    const spreadX = 2.8;
+    const spreadY = 3.0;
     const levelStarts = [];
     let idx = 0;
 
@@ -669,8 +494,8 @@
       const totalWidth = (count - 1) * spreadX;
       for (let i = 0; i < count; i++) {
         const x = -totalWidth / 2 + i * spreadX;
-        const y = (levels / 2 - level) * spreadY - 2;
-        const z = (Math.random() - 0.5) * 1.5;
+        const y = (levels / 2 - level) * spreadY;
+        const z = (Math.random() - 0.5) * 2;
         nodes.push({ pos: new THREE.Vector3(x, y, z), level, index: i, id: idx });
         if (level > 0) {
           edges.push({ from: levelStarts[level - 1] + Math.floor(i / 2), to: idx });
@@ -679,13 +504,14 @@
       }
     }
 
-    const nodeGeo = new THREE.SphereGeometry(0.2, 12, 12);
-    const rootGeo = new THREE.SphereGeometry(0.35, 16, 16);
+    // ─── Nodes ───
+    const nodeGeo = new THREE.SphereGeometry(0.18, 10, 10);
+    const rootGeo = new THREE.SphereGeometry(0.4, 16, 16);
 
     nodes.forEach((n) => {
       const isRoot = n.level === 0;
       const color = isRoot ? GOLD : (n.level <= 2 ? GOLD_LIGHT : BLUE);
-      const opacity = isRoot ? 1.0 : Math.max(0.25, 1.0 - n.level * 0.13);
+      const opacity = isRoot ? 1.0 : Math.max(0.15, 1.0 - n.level * 0.12);
 
       const mesh = new THREE.Mesh(
         isRoot ? rootGeo : nodeGeo,
@@ -694,10 +520,9 @@
       mesh.position.copy(n.pos);
       scene.add(mesh);
 
-      const glowSize = isRoot ? 0.8 : 0.4;
       const glow = new THREE.Mesh(
-        new THREE.SphereGeometry(glowSize, 12, 12),
-        new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: isRoot ? 0.12 : 0.04 })
+        new THREE.SphereGeometry(isRoot ? 1.0 : 0.35, 10, 10),
+        new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: isRoot ? 0.1 : 0.03 })
       );
       glow.position.copy(n.pos);
       scene.add(glow);
@@ -706,43 +531,47 @@
       n.glow = glow;
     });
 
+    // ─── Edges ───
     edges.forEach(e => {
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints([nodes[e.from].pos, nodes[e.to].pos]),
-        new THREE.LineBasicMaterial({ color: DIM, transparent: true, opacity: 0.2 })
+        new THREE.LineBasicMaterial({ color: DIM, transparent: true, opacity: 0.15 })
       );
       scene.add(line);
       e.line = line;
     });
 
+    // ─── Yield particles ───
     const particles = [];
-    const pGeo = new THREE.SphereGeometry(0.06, 6, 6);
+    const pGeo = new THREE.SphereGeometry(0.055, 6, 6);
 
     function spawnParticle() {
       const edge = edges[Math.floor(Math.random() * edges.length)];
       const from = nodes[edge.to].pos;
       const to = nodes[edge.from].pos;
-      const mesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.9 }));
+      const mesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.8 }));
       mesh.position.copy(from);
       scene.add(mesh);
-      particles.push({ mesh, from: from.clone(), to: to.clone(), t: 0, speed: 0.25 + Math.random() * 0.35 });
+      particles.push({ mesh, from: from.clone(), to: to.clone(), t: 0, speed: 0.2 + Math.random() * 0.3 });
     }
 
-    const dustN = 120;
+    // ─── Dust ───
+    const dustN = 150;
     const dPos = new Float32Array(dustN * 3);
     for (let i = 0; i < dustN; i++) {
-      dPos[i*3] = (Math.random()-0.5)*50;
-      dPos[i*3+1] = (Math.random()-0.5)*35;
-      dPos[i*3+2] = (Math.random()-0.5)*20;
+      dPos[i*3] = (Math.random()-0.5)*70;
+      dPos[i*3+1] = (Math.random()-0.5)*50;
+      dPos[i*3+2] = (Math.random()-0.5)*30;
     }
     const dustGeo = new THREE.BufferGeometry();
     dustGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
-    const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x444455, size: 0.04, transparent: true, opacity: 0.4 }));
+    const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x333344, size: 0.04, transparent: true, opacity: 0.35 }));
     scene.add(dust);
 
+    // ─── Resize ───
     function resize() {
-      const w = section.clientWidth;
-      const h = section.clientHeight;
+      const w = wrapper.clientWidth;
+      const h = wrapper.clientHeight;
       renderer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -750,12 +579,14 @@
     resize();
     window.addEventListener('resize', resize);
 
-    let isVisible = false;
+    // ─── Visibility ───
+    let isVisible = true;
     const observer = new IntersectionObserver(entries => {
       isVisible = entries[0].isIntersecting;
-    }, { threshold: 0.05 });
-    observer.observe(section);
+    }, { threshold: 0.01 });
+    observer.observe(wrapper);
 
+    // ─── Render ───
     const clock = new THREE.Clock();
     let spawnTimer = 0;
 
@@ -766,12 +597,12 @@
       const dt = Math.min(clock.getDelta(), 0.05);
       const t = clock.getElapsedTime();
 
-      camera.position.x = Math.sin(t * 0.08) * 2.5;
-      camera.position.y = 3 + Math.sin(t * 0.06) * 1.2;
-      camera.lookAt(0, -1, 0);
+      camera.position.x = Math.sin(t * 0.06) * 3;
+      camera.position.y = 5 + Math.sin(t * 0.04) * 1.5;
+      camera.lookAt(0, 0, 0);
 
       spawnTimer += dt;
-      if (spawnTimer > 0.1) { spawnParticle(); spawnTimer = 0; }
+      if (spawnTimer > 0.09) { spawnParticle(); spawnTimer = 0; }
 
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -785,18 +616,20 @@
         }
         const ease = p.t * p.t * (3 - 2 * p.t);
         p.mesh.position.lerpVectors(p.from, p.to, ease);
-        p.mesh.material.opacity = Math.sin(p.t * Math.PI) * 0.85;
-        p.mesh.scale.setScalar(0.8 + Math.sin(p.t * Math.PI) * 0.5);
+        p.mesh.material.opacity = Math.sin(p.t * Math.PI) * 0.8;
+        p.mesh.scale.setScalar(0.7 + Math.sin(p.t * Math.PI) * 0.5);
       }
 
       nodes.forEach((n, i) => {
-        const pulse = Math.sin(t * 1.8 + i * 0.4) * 0.5 + 0.5;
-        n.glow.material.opacity = (n.level === 0 ? 0.08 : 0.02) + pulse * 0.05;
-        n.mesh.position.y = n.pos.y + Math.sin(t * 0.4 + i * 0.25) * 0.06;
+        const pulse = Math.sin(t * 1.5 + i * 0.35) * 0.5 + 0.5;
+        n.glow.material.opacity = (n.level === 0 ? 0.06 : 0.015) + pulse * 0.04;
+        n.mesh.position.y = n.pos.y + Math.sin(t * 0.35 + i * 0.2) * 0.05;
         n.glow.position.y = n.mesh.position.y;
       });
 
-      dust.rotation.y += dt * 0.008;
+      dust.rotation.y += dt * 0.006;
+      dust.rotation.x += dt * 0.002;
+
       renderer.render(scene, camera);
     }
 
