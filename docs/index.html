@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Goldbot Sachs</title>
-  <meta name="description" content="Yield for autonomous AI agents. Deposit USDC, earn ~4% APY, refer others to earn more.">
+  <title>Goldbot Sachs — Yield for AI Agents</title>
+  <meta name="description" content="Your agent's idle USDC should be earning. Deposit into clawUSDC, earn yield automatically, withdraw anytime. Refer other agents to earn even more.">
 
   <link rel="alternate" type="application/json" href="/.well-known/agent-card.json">
 
@@ -66,7 +66,7 @@
 
     /* ─── Hero ─── */
     .hero {
-      padding: 180px 40px 80px;
+      padding: 180px 40px 60px;
       max-width: 1100px; margin: 0 auto;
       text-align: center;
     }
@@ -79,10 +79,10 @@
 
     .hero-sub {
       font-size: 20px; font-weight: 300; color: var(--text-secondary);
-      line-height: 1.7; max-width: 560px; margin: 0 auto 48px;
+      line-height: 1.7; max-width: 520px; margin: 0 auto 48px;
     }
 
-    /* ─── Install ─── */
+    /* ─── Install block (reusable) ─── */
     .install-block {
       background: var(--bg-card); border: 1px solid var(--border);
       max-width: 640px; margin: 0 auto; cursor: pointer;
@@ -125,21 +125,31 @@
     .install-note a { color: var(--gs-blue); text-decoration: none; }
     .install-note a:hover { text-decoration: underline; }
 
-    /* ─── Stats ─── */
-    .stats-bar {
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    /* ─── Problem ─── */
+    .problem {
+      border-top: 1px solid var(--border);
       background: var(--bg-secondary);
     }
-    .stats-inner {
-      max-width: 1100px; margin: 0 auto; padding: 36px 40px;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+
+    .problem-inner {
+      max-width: 1100px; margin: 0 auto; padding: 80px 40px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px;
     }
-    .stat { text-align: center; }
-    .stat-value { font-family: var(--mono); font-size: 28px; font-weight: 500; }
-    .stat-value .accent { color: var(--gs-gold); }
-    .stat-label {
-      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--text-muted); margin-top: 6px;
+
+    .pain-point { text-align: center; }
+
+    .pain-icon {
+      font-family: var(--mono); font-size: 32px; margin-bottom: 16px;
+      color: var(--gs-gold); opacity: 0.6;
+    }
+
+    .pain-point h3 {
+      font-family: var(--sans); font-size: 17px; font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .pain-point p {
+      font-size: 15px; color: var(--text-muted); line-height: 1.7;
     }
 
     /* ─── Sections ─── */
@@ -180,9 +190,22 @@
     }
 
     .step p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
-    .step code {
-      font-family: var(--mono); font-size: 13px; color: var(--gs-blue);
-      background: var(--bg-primary); padding: 2px 6px; border: 1px solid var(--border);
+
+    /* ─── Stats ─── */
+    .stats-bar {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+    .stats-inner {
+      max-width: 1100px; margin: 0 auto; padding: 36px 40px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+    }
+    .stat { text-align: center; }
+    .stat-value { font-family: var(--mono); font-size: 28px; font-weight: 500; }
+    .stat-value .accent { color: var(--gs-gold); }
+    .stat-label {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 6px;
     }
 
     /* ─── Features ─── */
@@ -206,7 +229,7 @@
       border-top: 1px solid var(--border);
       position: relative;
       overflow: hidden;
-      min-height: 700px;
+      min-height: 720px;
     }
 
     .referral-canvas {
@@ -218,10 +241,6 @@
       position: relative; z-index: 10;
       max-width: 1100px; margin: 0 auto; padding: 100px 40px;
       text-align: center;
-    }
-
-    .referral-content .section-label {
-      opacity: 0.8;
     }
 
     .referral-content h2 {
@@ -297,6 +316,23 @@
 
     .powered-desc { font-size: 13px; color: var(--text-muted); }
 
+    /* ─── Final CTA ─── */
+    .final-cta {
+      max-width: 1100px; margin: 0 auto; padding: 100px 40px;
+      text-align: center;
+    }
+
+    .final-cta h2 {
+      font-family: var(--serif); font-size: 36px; font-weight: 400;
+      letter-spacing: -0.5px; margin-bottom: 12px;
+    }
+
+    .final-cta h2 em { font-style: italic; color: var(--gs-gold); }
+
+    .final-cta p {
+      font-size: 16px; color: var(--text-muted); margin-bottom: 40px;
+    }
+
     /* ─── Footer ─── */
     footer {
       border-top: 1px solid var(--border); padding: 40px;
@@ -323,9 +359,10 @@
 
     /* ─── Responsive ─── */
     @media (max-width: 768px) {
-      .hero { padding: 140px 24px 60px; }
+      .hero { padding: 140px 24px 48px; }
       .hero h1 { font-size: 40px; }
       .hero-sub { font-size: 17px; }
+      .problem-inner { grid-template-columns: 1fr; gap: 32px; padding: 60px 24px; }
       .stats-inner { grid-template-columns: repeat(2, 1fr); padding: 24px; }
       .stat-value { font-size: 22px; }
       .section { padding: 60px 24px; }
@@ -334,6 +371,8 @@
       .referral-content { padding: 60px 24px; }
       .referral-content h2 { font-size: 36px; }
       .referral-steps { grid-template-columns: 1fr; }
+      .final-cta { padding: 60px 24px; }
+      .final-cta h2 { font-size: 28px; }
       .header-inner { padding: 16px 24px; }
       .logo-text { display: none; }
       .powered-grid { gap: 32px; }
@@ -358,15 +397,14 @@
     </div>
   </header>
 
-  <!-- ─── Hero ─── -->
+  <!-- ═══ 1. HERO — Attention ═══ -->
   <section class="hero">
     <h1>Your agent's money<br>should be <em>making money</em></h1>
     <p class="hero-sub">
-      Your agent earns USDC from jobs, payments, and x402 calls.
-      Between transactions, that money sits idle. We put it to work.
+      Idle USDC is dead money. One skill file turns your agent into a yield-earning machine.
     </p>
 
-    <div class="install-block" id="install" onclick="copySkillUrl(this)">
+    <div class="install-block" onclick="copySkillUrl(this)">
       <div class="install-header">
         <span class="install-header-left"><span class="dot"></span> skill url</span>
         <span class="copy-hint" id="copy-hint">click to copy</span>
@@ -376,15 +414,59 @@
       </div>
     </div>
     <p class="install-note">
-      A skill file is a markdown document that teaches your agent new capabilities.<br>
-      Point your agent at this URL or drop it in your skills directory.
-    </p>
-    <p class="install-note" style="margin-top:8px;">
+      Point your agent at this URL or drop it in your skills directory.<br>
       Auto-discover via <a href="/.well-known/agent-card.json">.well-known/agent-card.json</a>
     </p>
   </section>
 
-  <!-- ─── Stats ─── -->
+  <!-- ═══ 2. PROBLEM — Agitate ═══ -->
+  <div class="problem">
+    <div class="problem-inner">
+      <div class="pain-point">
+        <div class="pain-icon">$</div>
+        <h3>USDC sits idle between jobs</h3>
+        <p>Your agent earns from tasks, payments, and x402 calls. Between transactions, that capital does nothing.</p>
+      </div>
+      <div class="pain-point">
+        <div class="pain-icon">&#9719;</div>
+        <h3>Yield doesn't wait</h3>
+        <p>Every hour your USDC isn't deposited is yield you'll never get back. It compounds against you.</p>
+      </div>
+      <div class="pain-point">
+        <div class="pain-icon">&#8633;</div>
+        <h3>Manual DeFi doesn't scale</h3>
+        <p>You're not going to monitor vaults and harvest rewards for every agent you run. It needs to be autonomous.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 3. HOW IT WORKS — Solution ═══ -->
+  <section class="section" id="how">
+    <div class="section-label">How it works</div>
+    <h2>Three steps. Under a cent.</h2>
+    <p class="section-desc">
+      Your agent has USDC and a wallet on Base. That's all it needs.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Install the skill</h3>
+        <p>Give your agent the skill URL. It learns to deposit idle USDC, check yield, withdraw for payments, and refuel ETH &mdash; all on its own.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Deposit USDC</h3>
+        <p>Your agent deposits into clawUSDC &mdash; an ERC-4626 vault routing to Beefy's Morpho strategy. Yield accrues automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Withdraw anytime</h3>
+        <p>When your agent needs funds, it withdraws instantly. No lockup. No penalties. USDC back in the wallet in one tx.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 4. STATS — Proof ═══ -->
   <div class="stats-bar">
     <div class="stats-inner">
       <div class="stat">
@@ -396,8 +478,8 @@
         <div class="stat-label">Per transaction</div>
       </div>
       <div class="stat">
-        <div class="stat-value">Instant</div>
-        <div class="stat-label">Withdrawals</div>
+        <div class="stat-value">0</div>
+        <div class="stat-label">Lockup period</div>
       </div>
       <div class="stat">
         <div class="stat-value">5<span class="accent">%</span></div>
@@ -406,61 +488,35 @@
     </div>
   </div>
 
-  <!-- ─── How It Works ─── -->
-  <section class="section" id="how">
-    <div class="section-label">How it works</div>
-    <h2>Three steps. Under a cent.</h2>
-    <p class="section-desc">
-      Your agent has USDC and a wallet on Base. That's all it needs.
-    </p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Install the skill</h3>
-        <p>Give your agent the skill URL. It learns how to deposit idle USDC, check yield, withdraw for payments, and even refuel ETH via CoW Protocol &mdash; all autonomously.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Deposit USDC</h3>
-        <p>Your agent deposits into clawUSDC &mdash; an ERC-4626 vault that routes to Beefy's Morpho strategy. Yield accrues automatically. No harvesting, no rebalancing.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Withdraw anytime</h3>
-        <p>When your agent needs funds for a payment or x402 call, it withdraws instantly. No lockup. No penalties. USDC back in the wallet in one transaction.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── Why ─── -->
+  <!-- ═══ 5. FEATURES — Desire ═══ -->
   <section class="section">
-    <div class="section-label">Why Goldbot Sachs</div>
-    <h2>Built for the agent economy</h2>
+    <div class="section-label">Built for agents</div>
+    <h2>Not another DeFi dashboard.<br>A skill your agent runs itself.</h2>
     <p class="section-desc">
-      Agents earn and spend USDC. The gap between earning and spending is wasted yield.
-      Goldbot Sachs is designed for that gap.
+      No frontend. No manual harvesting. No bridging.
+      Your agent reads a markdown file and handles the rest.
     </p>
     <div class="features">
       <div class="feature">
-        <h3>Zero-gas refueling</h3>
-        <p>Wallet has USDC but no ETH? The skill swaps USDC to ETH via CoW Protocol using off-chain signatures. No gas needed to get gas.</p>
+        <h3>No ETH? No problem.</h3>
+        <p>The skill swaps USDC to ETH via CoW Protocol using off-chain signatures. Your agent refuels itself without holding gas tokens.</p>
       </div>
       <div class="feature">
-        <h3>x402 compatible</h3>
-        <p>Withdraw and pay in one flow. Your agent pulls funds from the vault only when it needs to spend &mdash; idle USDC stays earning.</p>
+        <h3>Earn until the moment you spend</h3>
+        <p>USDC stays in the vault earning yield until your agent needs it. Withdraw and pay in one flow &mdash; x402 compatible.</p>
       </div>
       <div class="feature">
-        <h3>Referral network</h3>
-        <p>Every depositor gets a referral link. Share it with other agents, earn yield on their deposits. The network grows itself.</p>
+        <h3>Fully on-chain. Fully open source.</h3>
+        <p>clawUSDC is a single ERC-4626 vault on Base. No backend. No API keys. No custody. Read the code, verify everything.</p>
       </div>
       <div class="feature">
-        <h3>One contract, no server</h3>
-        <p>clawUSDC is a single ERC-4626 vault on Base. No backend, no API, no custody. Open source. Verify everything on-chain.</p>
+        <h3>Non-custodial. Always.</h3>
+        <p>Your agent's wallet, your agent's funds. Deposit and withdraw permissionlessly. Nobody can freeze, lock, or redirect your USDC.</p>
       </div>
     </div>
   </section>
 
-  <!-- ─── Referral (Three.js background) ─── -->
+  <!-- ═══ 6. REFERRAL — Growth / Action (Three.js) ═══ -->
   <div class="referral-section" id="referral">
     <canvas class="referral-canvas" id="referral-canvas"></canvas>
     <div class="referral-content">
@@ -470,7 +526,7 @@
       <p class="referral-desc">
         Register as a referrer. Share your link with other agents.
         Every deposit they make earns you a cut of the yield &mdash;
-        automatically, on-chain, forever. No cap. No expiration.
+        on-chain, automatic, forever. No cap. No expiration.
       </p>
       <div class="referral-steps">
         <div class="referral-step">
@@ -495,7 +551,7 @@
     </div>
   </div>
 
-  <!-- ─── Powered By ─── -->
+  <!-- ═══ 7. TRUST — Powered By ═══ -->
   <div class="powered-section">
     <div class="section" style="padding: 60px 40px;">
       <div class="powered-grid">
@@ -527,14 +583,32 @@
     </div>
   </div>
 
+  <!-- ═══ 8. FINAL CTA — Close ═══ -->
+  <section class="final-cta">
+    <h2>Stop leaving yield on the table.<br><em>Give your agent the skill.</em></h2>
+    <p>One URL. Instant setup. Your agent handles the rest.</p>
+    <div class="install-block" onclick="copySkillUrl(this)" style="max-width:640px;margin:0 auto;">
+      <div class="install-header">
+        <span class="install-header-left"><span class="dot"></span> skill url</span>
+        <span class="copy-hint" id="copy-hint-2">click to copy</span>
+      </div>
+      <div class="install-body">
+        <span class="path">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Scripts ═══ -->
   <script>
     function copySkillUrl(block) {
-      var url = document.getElementById('skill-url').textContent;
+      var url = 'https://goldbotsachs.com/skills/goldbot-sachs.md';
       navigator.clipboard.writeText(url);
-      var hint = document.getElementById('copy-hint');
-      hint.textContent = 'copied!';
-      hint.classList.add('copied');
-      setTimeout(function() { hint.textContent = 'click to copy'; hint.classList.remove('copied'); }, 2000);
+      var hints = block.querySelectorAll('.copy-hint');
+      hints.forEach(function(hint) {
+        hint.textContent = 'copied!';
+        hint.classList.add('copied');
+        setTimeout(function() { hint.textContent = 'click to copy'; hint.classList.remove('copied'); }, 2000);
+      });
     }
 
     // Live APY from Beefy
@@ -550,7 +624,7 @@
       .catch(function() {});
   </script>
 
-  <!-- ─── Three.js Referral Visualization ─── -->
+  <!-- ═══ Three.js Referral Visualization ═══ -->
   <script type="importmap">
   {
     "imports": {
@@ -581,7 +655,6 @@
     const BLUE = new THREE.Color(0x7297C5);
     const DIM = new THREE.Color(0x333340);
 
-    // ─── Build pyramid tree ───
     const nodes = [];
     const edges = [];
     const levels = 6;
@@ -600,14 +673,12 @@
         const z = (Math.random() - 0.5) * 1.5;
         nodes.push({ pos: new THREE.Vector3(x, y, z), level, index: i, id: idx });
         if (level > 0) {
-          const parentId = levelStarts[level - 1] + Math.floor(i / 2);
-          edges.push({ from: parentId, to: idx });
+          edges.push({ from: levelStarts[level - 1] + Math.floor(i / 2), to: idx });
         }
         idx++;
       }
     }
 
-    // ─── Node meshes ───
     const nodeGeo = new THREE.SphereGeometry(0.2, 12, 12);
     const rootGeo = new THREE.SphereGeometry(0.35, 16, 16);
 
@@ -635,18 +706,15 @@
       n.glow = glow;
     });
 
-    // ─── Edge lines ───
     edges.forEach(e => {
-      const pts = [nodes[e.from].pos, nodes[e.to].pos];
       const line = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(pts),
+        new THREE.BufferGeometry().setFromPoints([nodes[e.from].pos, nodes[e.to].pos]),
         new THREE.LineBasicMaterial({ color: DIM, transparent: true, opacity: 0.2 })
       );
       scene.add(line);
       e.line = line;
     });
 
-    // ─── Yield particles ───
     const particles = [];
     const pGeo = new THREE.SphereGeometry(0.06, 6, 6);
 
@@ -657,10 +725,9 @@
       const mesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.9 }));
       mesh.position.copy(from);
       scene.add(mesh);
-      particles.push({ mesh, from: from.clone(), to: to.clone(), t: 0, speed: 0.25 + Math.random() * 0.35, edgeRef: edge });
+      particles.push({ mesh, from: from.clone(), to: to.clone(), t: 0, speed: 0.25 + Math.random() * 0.35 });
     }
 
-    // ─── Ambient dust ───
     const dustN = 120;
     const dPos = new Float32Array(dustN * 3);
     for (let i = 0; i < dustN; i++) {
@@ -673,7 +740,6 @@
     const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0x444455, size: 0.04, transparent: true, opacity: 0.4 }));
     scene.add(dust);
 
-    // ─── Resize ───
     function resize() {
       const w = section.clientWidth;
       const h = section.clientHeight;
@@ -684,14 +750,12 @@
     resize();
     window.addEventListener('resize', resize);
 
-    // ─── Intersection observer — only animate when visible ───
     let isVisible = false;
     const observer = new IntersectionObserver(entries => {
       isVisible = entries[0].isIntersecting;
     }, { threshold: 0.05 });
     observer.observe(section);
 
-    // ─── Render loop ───
     const clock = new THREE.Clock();
     let spawnTimer = 0;
 
@@ -733,14 +797,13 @@
       });
 
       dust.rotation.y += dt * 0.008;
-
       renderer.render(scene, camera);
     }
 
     animate();
   </script>
 
-  <!-- ─── Footer ─── -->
+  <!-- ═══ Footer ═══ -->
   <footer>
     <div class="footer-inner">
       <div class="footer-logo">Goldbot Sachs</div>
