@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goldbot Sachs — Referral Network</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0A0A0F; overflow: hidden; font-family: 'Inter', -apple-system, sans-serif; }
+    #canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none; z-index: 10;
+    }
+
+    .overlay h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 52px; font-weight: 400; color: #F5F5F7;
+      text-align: center; line-height: 1.2; margin-bottom: 16px;
+      text-shadow: 0 0 60px rgba(10,10,15,0.9);
+    }
+
+    .overlay h1 em { font-style: italic; color: #C9A84C; }
+
+    .overlay p {
+      font-size: 18px; color: #A2A4A6; text-align: center;
+      max-width: 480px; line-height: 1.7;
+      text-shadow: 0 0 40px rgba(10,10,15,0.95);
+    }
+
+    .overlay .cta {
+      margin-top: 32px; pointer-events: all;
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      color: #0A0A0F; background: #C9A84C; border: none;
+      padding: 14px 32px; cursor: pointer; text-decoration: none;
+      transition: all 0.2s; letter-spacing: 0.5px;
+    }
+    .overlay .cta:hover { background: #D4B86A; transform: translateY(-1px); }
+
+    .stats-float {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 48px; z-index: 10; pointer-events: none;
+    }
+
+    .stats-float .sf {
+      text-align: center;
+    }
+
+    .stats-float .sf-val {
+      font-family: 'JetBrains Mono', monospace; font-size: 24px;
+      color: #C9A84C; font-weight: 500;
+    }
+
+    .stats-float .sf-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      color: #6B6D70; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px;
+    }
+
+    .logo-float {
+      position: fixed; top: 24px; left: 28px; z-index: 10;
+      font-family: 'Playfair Display', Georgia, serif; font-size: 20px;
+      color: #C9A84C; font-weight: 700; pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .overlay h1 { font-size: 32px; padding: 0 24px; }
+      .overlay p { font-size: 15px; padding: 0 24px; }
+      .stats-float { gap: 24px; }
+      .stats-float .sf-val { font-size: 18px; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div class="logo-float">GS</div>
+
+  <div class="overlay">
+    <h1>Refer agents.<br>Earn <em>passive yield</em>.</h1>
+    <p>
+      Every agent you refer earns you a share of their yield.
+      The more you refer, the more you earn. On-chain. Automatic. Forever.
+    </p>
+    <a class="cta" href="https://goldbotsachs.com/#referral">Start earning</a>
+  </div>
+
+  <div class="stats-float">
+    <div class="sf">
+      <div class="sf-val">5%</div>
+      <div class="sf-label">Referral yield</div>
+    </div>
+    <div class="sf">
+      <div class="sf-val">∞</div>
+      <div class="sf-label">Cascading</div>
+    </div>
+    <div class="sf">
+      <div class="sf-val">$1</div>
+      <div class="sf-label">Min deposit</div>
+    </div>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+    // ─── Setup ───
+    const canvas = document.getElementById('canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0A0A0F, 0.035);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+    camera.position.set(0, 2, 28);
+    camera.lookAt(0, -2, 0);
+
+    // ─── Colors ───
+    const GOLD = new THREE.Color(0xC9A84C);
+    const GOLD_LIGHT = new THREE.Color(0xD4B86A);
+    const BLUE = new THREE.Color(0x7297C5);
+    const GREEN = new THREE.Color(0x7EC699);
+    const DIM = new THREE.Color(0x333340);
+
+    // ─── Pyramid tree structure ───
+    const nodes = [];
+    const edges = [];
+    const levels = 6;
+    const spreadX = 3.2;
+    const spreadY = 3.5;
+
+    // Build pyramid: top = 1 node (you), each level doubles
+    for (let level = 0; level < levels; level++) {
+      const count = Math.pow(2, level);
+      const totalWidth = (count - 1) * spreadX;
+      for (let i = 0; i < count; i++) {
+        const x = -totalWidth / 2 + i * spreadX;
+        const y = (levels / 2 - level) * spreadY - 2;
+        const z = (Math.random() - 0.5) * 2;
+        nodes.push({
+          pos: new THREE.Vector3(x, y, z),
+          level,
+          index: i,
+          id: nodes.length,
+          parentId: level > 0 ? nodes.length - count + Math.floor(i / 2) - (level > 1 ? Math.pow(2, level - 1) - Math.pow(2, level - 2) : 0) : -1
+        });
+      }
+    }
+
+    // Recalculate parent IDs properly
+    let nodeIdx = 0;
+    const levelStarts = [];
+    for (let level = 0; level < levels; level++) {
+      levelStarts.push(nodeIdx);
+      nodeIdx += Math.pow(2, level);
+    }
+
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      if (n.level > 0) {
+        const parentStart = levelStarts[n.level - 1];
+        n.parentId = parentStart + Math.floor(n.index / 2);
+        edges.push({ from: n.parentId, to: i });
+      }
+    }
+
+    // ─── Node meshes ───
+    const nodeMeshes = [];
+    const nodeGeo = new THREE.SphereGeometry(0.22, 16, 16);
+    const glowGeo = new THREE.SphereGeometry(0.35, 16, 16);
+
+    nodes.forEach((n, i) => {
+      const isRoot = n.level === 0;
+      const mat = new THREE.MeshBasicMaterial({
+        color: isRoot ? GOLD : (n.level === 1 ? GOLD_LIGHT : BLUE),
+        transparent: true,
+        opacity: isRoot ? 1.0 : Math.max(0.3, 1.0 - n.level * 0.12)
+      });
+      const mesh = new THREE.Mesh(isRoot ? new THREE.SphereGeometry(0.35, 16, 16) : nodeGeo, mat);
+      mesh.position.copy(n.pos);
+      scene.add(mesh);
+
+      // Glow
+      const glowMat = new THREE.MeshBasicMaterial({
+        color: isRoot ? GOLD : GOLD_LIGHT,
+        transparent: true,
+        opacity: isRoot ? 0.15 : 0.05
+      });
+      const glow = new THREE.Mesh(new THREE.SphereGeometry(isRoot ? 0.7 : 0.45, 16, 16), glowMat);
+      glow.position.copy(n.pos);
+      scene.add(glow);
+
+      nodeMeshes.push({ mesh, glow, node: n });
+    });
+
+    // ─── Edge lines ───
+    const edgeLines = [];
+    edges.forEach(e => {
+      const from = nodes[e.from].pos;
+      const to = nodes[e.to].pos;
+      const geo = new THREE.BufferGeometry().setFromPoints([from, to]);
+      const mat = new THREE.LineBasicMaterial({
+        color: DIM,
+        transparent: true,
+        opacity: 0.25
+      });
+      const line = new THREE.Line(geo, mat);
+      scene.add(line);
+      edgeLines.push({ line, from: e.from, to: e.to });
+    });
+
+    // ─── Yield particles (flowing UP from children to parents = yield to referrer) ───
+    const particles = [];
+    const particleGeo = new THREE.SphereGeometry(0.06, 8, 8);
+    const particleMat = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.9 });
+
+    function spawnParticle() {
+      // Pick a random edge
+      const edge = edges[Math.floor(Math.random() * edges.length)];
+      const from = nodes[edge.to].pos;   // child
+      const to = nodes[edge.from].pos;    // parent (yield flows up)
+      const mesh = new THREE.Mesh(particleGeo, particleMat.clone());
+      mesh.position.copy(from);
+      scene.add(mesh);
+      particles.push({
+        mesh,
+        from: from.clone(),
+        to: to.clone(),
+        t: 0,
+        speed: 0.3 + Math.random() * 0.4,
+        edge
+      });
+    }
+
+    // ─── Background particles (ambient dust) ───
+    const dustCount = 200;
+    const dustGeo = new THREE.BufferGeometry();
+    const dustPositions = new Float32Array(dustCount * 3);
+    for (let i = 0; i < dustCount; i++) {
+      dustPositions[i * 3] = (Math.random() - 0.5) * 60;
+      dustPositions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+      dustPositions[i * 3 + 2] = (Math.random() - 0.5) * 30;
+    }
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+    const dustMat = new THREE.PointsMaterial({ color: 0x444455, size: 0.05, transparent: true, opacity: 0.5 });
+    const dust = new THREE.Points(dustGeo, dustMat);
+    scene.add(dust);
+
+    // ─── Animate ───
+    const clock = new THREE.Clock();
+    let spawnTimer = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+      const t = clock.getElapsedTime();
+
+      // Camera gentle sway
+      camera.position.x = Math.sin(t * 0.1) * 2;
+      camera.position.y = 2 + Math.sin(t * 0.08) * 1;
+      camera.lookAt(0, -2, 0);
+
+      // Spawn particles
+      spawnTimer += dt;
+      if (spawnTimer > 0.08) {
+        spawnParticle();
+        spawnTimer = 0;
+      }
+
+      // Update particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.t += dt * p.speed;
+
+        if (p.t >= 1) {
+          scene.remove(p.mesh);
+          p.mesh.geometry.dispose();
+          p.mesh.material.dispose();
+          particles.splice(i, 1);
+          continue;
+        }
+
+        // Smooth ease
+        const ease = p.t * p.t * (3 - 2 * p.t);
+        p.mesh.position.lerpVectors(p.from, p.to, ease);
+        p.mesh.material.opacity = Math.sin(p.t * Math.PI) * 0.9;
+
+        // Scale pulse
+        const s = 0.8 + Math.sin(p.t * Math.PI) * 0.5;
+        p.mesh.scale.setScalar(s);
+      }
+
+      // Pulse nodes
+      nodeMeshes.forEach((nm, i) => {
+        const pulse = Math.sin(t * 2 + i * 0.5) * 0.5 + 0.5;
+        nm.glow.material.opacity = (nm.node.level === 0 ? 0.1 : 0.03) + pulse * 0.06;
+        nm.mesh.position.y = nm.node.pos.y + Math.sin(t * 0.5 + i * 0.3) * 0.08;
+        nm.glow.position.y = nm.mesh.position.y;
+      });
+
+      // Pulse edges on particle pass
+      edgeLines.forEach(el => {
+        let active = false;
+        particles.forEach(p => {
+          if (p.edge === edges.find(e => e.from === el.from && e.to === el.to)) {
+            active = true;
+          }
+        });
+        el.line.material.opacity = active ? 0.5 : 0.15;
+        el.line.material.color = active ? GOLD : DIM;
+      });
+
+      // Dust drift
+      dust.rotation.y += dt * 0.01;
+      dust.rotation.x += dt * 0.005;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // ─── Resize ───
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
