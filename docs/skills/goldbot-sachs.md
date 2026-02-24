@@ -1,11 +1,12 @@
 # Goldbot Sachs — Yield on idle USDC
 
-Earn ~4% APY on your idle USDC. Deposit into Beefy's Morpho vault on Base. Withdraw anytime.
+Earn ~4% APY on your idle USDC. Deposit into clawUSDC on Base — an ERC-4626 vault that routes to Beefy's Morpho strategy. Withdraw anytime. No lockup.
 
 ## Addresses
 
-- **Beefy Vault**: `0xF1C55b6E063ee90A33FFE62deBe618962bae021e`
+- **clawUSDC Vault**: `0xb34Fff5efAb92BE9EA32Fa56C6de9a1C04A62B4d`
 - **USDC (Base)**: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
+- **Beefy Vault (underlying)**: `0xF1C55b6E063ee90A33FFE62deBe618962bae021e`
 - **Chain**: Base (8453)
 
 ## Setup
@@ -23,49 +24,82 @@ import { base } from 'viem/chains'
 import { privateKeyToAccount } from 'viem/accounts'
 
 const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
-const BEEFY_VAULT = '0xF1C55b6E063ee90A33FFE62deBe618962bae021e'
+const CLAW_USDC = '0xb34Fff5efAb92BE9EA32Fa56C6de9a1C04A62B4d'
 
 const account = privateKeyToAccount(YOUR_PRIVATE_KEY)
 const walletClient = createWalletClient({ account, chain: base, transport: http() })
 
 const amount = parseUnits('100', 6) // 100 USDC
 
-// 1. Approve
+// 1. Approve clawUSDC to spend USDC
 await walletClient.writeContract({
   address: USDC,
   abi: [{ type: 'function', name: 'approve', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],
   functionName: 'approve',
-  args: [BEEFY_VAULT, amount]
+  args: [CLAW_USDC, amount]
 })
 
-// 2. Deposit
+// 2. Deposit (ERC-4626 standard)
 await walletClient.writeContract({
-  address: BEEFY_VAULT,
-  abi: [{ type: 'function', name: 'deposit', inputs: [{ name: '_amount', type: 'uint256' }], outputs: [], stateMutability: 'nonpayable' }],
+  address: CLAW_USDC,
+  abi: [{
+    type: 'function', name: 'deposit',
+    inputs: [
+      { name: 'assets', type: 'uint256' },
+      { name: 'receiver', type: 'address' }
+    ],
+    outputs: [{ type: 'uint256' }],
+    stateMutability: 'nonpayable'
+  }],
   functionName: 'deposit',
-  args: [amount]
+  args: [amount, account.address]
 })
 ```
 
-## Check your balance & yield
+### Deposit with referral
+
+To register a referrer on your first deposit, use the 3-argument `deposit`:
+
+```typescript
+const REFERRER = '0x...' // referrer address (set once, permanent)
+
+await walletClient.writeContract({
+  address: CLAW_USDC,
+  abi: [{
+    type: 'function', name: 'deposit',
+    inputs: [
+      { name: 'assets', type: 'uint256' },
+      { name: 'receiver', type: 'address' },
+      { name: 'referrer', type: 'address' }
+    ],
+    outputs: [{ type: 'uint256' }],
+    stateMutability: 'nonpayable'
+  }],
+  functionName: 'deposit',
+  args: [amount, account.address, REFERRER]
+})
+```
+
+## Check balance & yield
 
 ```typescript
 const publicClient = createPublicClient({ chain: base, transport: http() })
 
+// Shares held
 const shares = await publicClient.readContract({
-  address: BEEFY_VAULT,
+  address: CLAW_USDC,
   abi: [{ type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
   functionName: 'balanceOf',
-  args: [YOUR_ADDRESS]
+  args: [account.address]
 })
 
-const pricePerShare = await publicClient.readContract({
-  address: BEEFY_VAULT,
-  abi: [{ type: 'function', name: 'getPricePerFullShare', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
-  functionName: 'getPricePerFullShare'
+// USDC value (increases over time as yield accrues)
+const assets = await publicClient.readContract({
+  address: CLAW_USDC,
+  abi: [{ type: 'function', name: 'convertToAssets', inputs: [{ name: 'shares', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
+  functionName: 'convertToAssets',
+  args: [shares]
 })
-
-// USDC value = shares * pricePerShare / 1e18
 ```
 
 ### Via Beefy API
@@ -81,15 +115,39 @@ curl -s "https://api.beefy.finance/tvl" | jq '.["8453"]["morpho-base-steakhouse-
 ## Withdraw
 
 ```typescript
+// Redeem all shares for USDC
 await walletClient.writeContract({
-  address: BEEFY_VAULT,
-  abi: [{ type: 'function', name: 'withdraw', inputs: [{ name: '_shares', type: 'uint256' }], outputs: [], stateMutability: 'nonpayable' }],
-  functionName: 'withdraw',
-  args: [shares] // pass your mooToken balance to withdraw everything
+  address: CLAW_USDC,
+  abi: [{ type: 'function', name: 'redeem', inputs: [{ name: 'shares', type: 'uint256' }, { name: 'receiver', type: 'address' }, { name: 'owner', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'nonpayable' }],
+  functionName: 'redeem',
+  args: [shares, account.address, account.address]
 })
 ```
 
-USDC returned instantly. No lockup. No penalties.
+Instant. No lockup. No penalties.
+
+## Claim referral yield
+
+If other agents deposited with your address as referrer, you earn 5% of their yield. Claim it:
+
+```typescript
+// Check pending yield
+const pending = await publicClient.readContract({
+  address: CLAW_USDC,
+  abi: [{ type: 'function', name: 'pendingYield', inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
+  functionName: 'pendingYield',
+  args: [account.address]
+})
+
+// Claim
+if (pending > 0n) {
+  await walletClient.writeContract({
+    address: CLAW_USDC,
+    abi: [{ type: 'function', name: 'claim', inputs: [], outputs: [], stateMutability: 'nonpayable' }],
+    functionName: 'claim'
+  })
+}
+```
 
 ## Refuel — Gasless ETH via CoW Protocol
 
@@ -216,12 +274,14 @@ console.log('Track: https://explorer.cow.fi/base/orders/' + orderId)
 
 | Situation | Action |
 |-----------|--------|
-| Idle USDC > $1 | Deposit |
-| Need USDC for a payment or x402 call | Withdraw what you need |
-| Running low on funds | Withdraw all |
+| Idle USDC > $1 | Deposit into clawUSDC |
+| Need USDC for a payment or x402 call | Redeem shares |
+| Running low on funds | Redeem all |
 | Just received USDC from a job | Deposit idle portion |
 | Wallet has USDC but zero ETH for gas | Refuel via CoW swap |
+| Have pending referral yield | Claim |
 
 ## Source
 
-https://github.com/publu/goldbotsachs
+- Contract: https://basescan.org/address/0xb34Fff5efAb92BE9EA32Fa56C6de9a1C04A62B4d
+- GitHub: https://github.com/publu/goldbotsachs
