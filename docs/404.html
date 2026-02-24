@@ -206,21 +206,31 @@
         Withdraw anytime. Then share your own link to earn even more.
       </p>
 
-      <div class="install-block" onclick="copySkill()">
+      <div class="install-block" onclick="copyUrl('skill-url', 'copy-hint-1')">
         <div class="install-header">
-          <span class="install-header-left"><span class="dot"></span> personalized skill</span>
-          <span class="copy-hint" id="copy-hint">click to copy</span>
+          <span class="install-header-left"><span class="dot"></span> skill url</span>
+          <span class="copy-hint" id="copy-hint-1">click to copy</span>
         </div>
         <div class="install-body">
-          <span class="path" id="skill-preview"></span>
+          <span class="path" id="skill-url">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
+        </div>
+      </div>
+
+      <div class="install-block" onclick="copyUrl('referrer-addr', 'copy-hint-2')" style="margin-top:16px;">
+        <div class="install-header">
+          <span class="install-header-left"><span class="dot"></span> your referrer</span>
+          <span class="copy-hint" id="copy-hint-2">click to copy</span>
+        </div>
+        <div class="install-body">
+          <span class="path" id="referrer-addr"></span>
         </div>
       </div>
 
       <p class="referral-note" style="margin-top:16px;">
-        Save as <code style="font-family:var(--mono);color:var(--gs-blue);background:var(--bg-card);padding:2px 6px;border:1px solid var(--border);">goldbot-sachs.md</code> in your agent's skills directory, or point your agent at this content.
+        Install the skill, then use the 3-argument <code style="font-family:var(--mono);color:var(--gs-blue);background:var(--bg-card);padding:2px 6px;border:1px solid var(--border);">deposit(assets, receiver, referrer)</code> on your first deposit.
       </p>
       <p class="referral-note" style="margin-top:20px;">
-        After you deposit, get your own referral link:<br>
+        After you deposit, share your own link to earn on referrals:<br>
         <strong>goldbotsachs.com/r/YOUR_ADDRESS</strong>
       </p>
     </div>
@@ -251,131 +261,6 @@
   </footer>
 
   <script>
-    var SKILL_TEMPLATE = [
-      '# Goldbot Sachs — Yield on idle USDC',
-      '',
-      'Earn ~4% APY on idle USDC. Deposit into clawUSDC on Base. Withdraw anytime.',
-      '',
-      '**Referred by:** `{{REFERRER}}`',
-      'Your first deposit registers this referral on-chain.',
-      'After depositing, share your own link to earn on referrals: `https://goldbotsachs.com/r/YOUR_WALLET_ADDRESS`',
-      '',
-      '## Addresses',
-      '',
-      '- **clawUSDC Vault**: `0xb34Fff5efAb92BE9EA32Fa56C6de9a1C04A62B4d`',
-      '- **USDC (Base)**: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`',
-      '- **Beefy Vault (underlying)**: `0xF1C55b6E063ee90A33FFE62deBe618962bae021e`',
-      '- **Chain**: Base (8453)',
-      '',
-      '## Setup',
-      '',
-      '```bash',
-      'mkdir -p /tmp/goldbot-sachs && cd /tmp/goldbot-sachs',
-      'npm init -y && npm install viem',
-      '```',
-      '',
-      '## Deposit USDC (with referral)',
-      '',
-      '```typescript',
-      "import { createWalletClient, createPublicClient, http, parseUnits } from 'viem'",
-      "import { base } from 'viem/chains'",
-      "import { privateKeyToAccount } from 'viem/accounts'",
-      '',
-      "const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'",
-      "const CLAW_USDC = '0xb34Fff5efAb92BE9EA32Fa56C6de9a1C04A62B4d'",
-      "const REFERRER = '{{REFERRER}}'",
-      '',
-      'const account = privateKeyToAccount(YOUR_PRIVATE_KEY)',
-      'const walletClient = createWalletClient({ account, chain: base, transport: http() })',
-      '',
-      "const amount = parseUnits('100', 6) // 100 USDC",
-      '',
-      '// 1. Approve clawUSDC to spend USDC',
-      'await walletClient.writeContract({',
-      '  address: USDC,',
-      "  abi: [{ type: 'function', name: 'approve', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ type: 'bool' }], stateMutability: 'nonpayable' }],",
-      "  functionName: 'approve',",
-      '  args: [CLAW_USDC, amount]',
-      '})',
-      '',
-      '// 2. Deposit with referral',
-      'await walletClient.writeContract({',
-      '  address: CLAW_USDC,',
-      '  abi: [{',
-      "    type: 'function', name: 'deposit',",
-      '    inputs: [',
-      "      { name: 'assets', type: 'uint256' },",
-      "      { name: 'receiver', type: 'address' },",
-      "      { name: 'referrer', type: 'address' }",
-      '    ],',
-      "    outputs: [{ type: 'uint256' }],",
-      "    stateMutability: 'nonpayable'",
-      '  }],',
-      "  functionName: 'deposit',",
-      '  args: [amount, account.address, REFERRER]',
-      '})',
-      '```',
-      '',
-      '## Check balance',
-      '',
-      '```typescript',
-      'const publicClient = createPublicClient({ chain: base, transport: http() })',
-      '',
-      '// Shares held',
-      'const shares = await publicClient.readContract({',
-      '  address: CLAW_USDC,',
-      "  abi: [{ type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],",
-      "  functionName: 'balanceOf',",
-      '  args: [account.address]',
-      '})',
-      '',
-      '// USDC value (increases as yield accrues)',
-      'const assets = await publicClient.readContract({',
-      '  address: CLAW_USDC,',
-      "  abi: [{ type: 'function', name: 'convertToAssets', inputs: [{ name: 'shares', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],",
-      "  functionName: 'convertToAssets',",
-      '  args: [shares]',
-      '})',
-      '```',
-      '',
-      '## Withdraw',
-      '',
-      '```typescript',
-      'await walletClient.writeContract({',
-      '  address: CLAW_USDC,',
-      "  abi: [{ type: 'function', name: 'redeem', inputs: [{ name: 'shares', type: 'uint256' }, { name: 'receiver', type: 'address' }, { name: 'owner', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'nonpayable' }],",
-      "  functionName: 'redeem',",
-      '  args: [shares, account.address, account.address]',
-      '})',
-      '```',
-      '',
-      'Instant. No lockup. No penalties.',
-      '',
-      '## Claim referral yield',
-      '',
-      '```typescript',
-      '// Check pending yield',
-      'const pending = await publicClient.readContract({',
-      '  address: CLAW_USDC,',
-      "  abi: [{ type: 'function', name: 'pendingYield', inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],",
-      "  functionName: 'pendingYield',",
-      '  args: [account.address]',
-      '})',
-      '',
-      '// Claim',
-      'await walletClient.writeContract({',
-      '  address: CLAW_USDC,',
-      "  abi: [{ type: 'function', name: 'claim', inputs: [], outputs: [], stateMutability: 'nonpayable' }],",
-      "  functionName: 'claim'",
-      '})',
-      '```',
-      '',
-      '## Source',
-      '',
-      '- Contract: https://basescan.org/address/0xb34Fff5efAb92BE9EA32Fa56C6de9a1C04A62B4d',
-      '- GitHub: https://github.com/publu/goldbotsachs',
-    ].join('\n');
-
     function isValidAddress(addr) {
       return /^0x[0-9a-fA-F]{40}$/.test(addr);
     }
@@ -384,14 +269,10 @@
       return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
     }
 
-    function getSkillContent(referrer) {
-      return SKILL_TEMPLATE.replace(/\{\{REFERRER\}\}/g, referrer);
-    }
-
-    function copySkill() {
-      var content = getSkillContent(window._referrer);
-      navigator.clipboard.writeText(content);
-      var hint = document.getElementById('copy-hint');
+    function copyUrl(elemId, hintId) {
+      var text = document.getElementById(elemId).textContent;
+      navigator.clipboard.writeText(text);
+      var hint = document.getElementById(hintId);
       hint.textContent = 'copied!';
       hint.classList.add('copied');
       setTimeout(function() {
@@ -404,11 +285,9 @@
     var match = path.match(/^\/r\/(0x[0-9a-fA-F]{40})\/?$/);
 
     if (match && isValidAddress(match[1])) {
-      window._referrer = match[1];
       document.getElementById('referral-page').style.display = 'flex';
       document.getElementById('referrer-display').textContent = truncateAddress(match[1]);
-      document.getElementById('skill-preview').textContent =
-        'goldbot-sachs.md \u2014 ' + truncateAddress(match[1]);
+      document.getElementById('referrer-addr').textContent = match[1];
       document.title = 'Goldbot Sachs \u2014 Invited by ' + truncateAddress(match[1]);
     } else {
       document.getElementById('not-found-page').style.display = 'flex';
