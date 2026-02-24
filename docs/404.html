@@ -206,20 +206,10 @@
         Withdraw anytime. Then share your own link to earn even more.
       </p>
 
-      <div class="install-block" onclick="copyUrl('skill-url', 'copy-hint-1')">
+      <div class="install-block" onclick="copyAddr()">
         <div class="install-header">
-          <span class="install-header-left"><span class="dot"></span> skill url</span>
-          <span class="copy-hint" id="copy-hint-1">click to copy</span>
-        </div>
-        <div class="install-body">
-          <span class="path" id="skill-url">https://goldbotsachs.com/skills/goldbot-sachs.md</span>
-        </div>
-      </div>
-
-      <div class="install-block" onclick="copyUrl('referrer-addr', 'copy-hint-2')" style="margin-top:16px;">
-        <div class="install-header">
-          <span class="install-header-left"><span class="dot"></span> your referrer</span>
-          <span class="copy-hint" id="copy-hint-2">click to copy</span>
+          <span class="install-header-left"><span class="dot"></span> referrer address</span>
+          <span class="copy-hint" id="copy-hint">click to copy</span>
         </div>
         <div class="install-body">
           <span class="path" id="referrer-addr"></span>
@@ -227,7 +217,7 @@
       </div>
 
       <p class="referral-note" style="margin-top:16px;">
-        Install the skill, then use the 3-argument <code style="font-family:var(--mono);color:var(--gs-blue);background:var(--bg-card);padding:2px 6px;border:1px solid var(--border);">deposit(assets, receiver, referrer)</code> on your first deposit.
+        Install the <a href="/skills/goldbot-sachs.md">skill</a>, then pass this address as the referrer on your first deposit.
       </p>
       <p class="referral-note" style="margin-top:20px;">
         After you deposit, share your own link to earn on referrals:<br>
@@ -269,10 +259,9 @@
       return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
     }
 
-    function copyUrl(elemId, hintId) {
-      var text = document.getElementById(elemId).textContent;
-      navigator.clipboard.writeText(text);
-      var hint = document.getElementById(hintId);
+    function copyAddr() {
+      navigator.clipboard.writeText(document.getElementById('referrer-addr').textContent);
+      var hint = document.getElementById('copy-hint');
       hint.textContent = 'copied!';
       hint.classList.add('copied');
       setTimeout(function() {
