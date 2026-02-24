@@ -90,47 +90,6 @@
       margin-bottom: 40px;
     }
 
-    .install-block {
-      background: var(--bg-card); border: 1px solid var(--border);
-      cursor: pointer; transition: all 0.25s ease; position: relative;
-    }
-    .install-block:hover {
-      border-color: var(--gs-gold);
-      box-shadow: 0 0 0 1px var(--gs-gold), 0 8px 32px rgba(201, 168, 76, 0.08);
-    }
-    .install-block:active { transform: scale(0.995); }
-
-    .install-header {
-      padding: 14px 24px; border-bottom: 1px solid var(--border);
-      font-family: var(--mono); font-size: 12px; color: var(--text-muted);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .install-header-left { display: flex; align-items: center; gap: 8px; }
-    .install-header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-
-    .copy-hint {
-      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
-      transition: color 0.2s;
-    }
-    .install-block:hover .copy-hint { color: var(--gs-gold); }
-    .copy-hint.copied { color: var(--green); }
-
-    .install-body {
-      padding: 24px; font-family: var(--mono); font-size: 14px;
-      line-height: 2; color: var(--text-secondary); text-align: center;
-    }
-
-    .install-body .path { color: var(--gs-gold); }
-
-    .referral-note {
-      margin-top: 20px; font-family: var(--mono); font-size: 12px;
-      color: var(--text-muted); line-height: 1.8;
-    }
-    .referral-note a { color: var(--gs-blue); text-decoration: none; }
-    .referral-note a:hover { text-decoration: underline; }
-    .referral-note strong { color: var(--text-secondary); }
-
     /* ─── 404 ─── */
     .not-found {
       flex: 1; display: flex; align-items: center; justify-content: center;
@@ -206,23 +165,12 @@
         Withdraw anytime. Then share your own link to earn even more.
       </p>
 
-      <div class="install-block" onclick="copyAddr()">
-        <div class="install-header">
-          <span class="install-header-left"><span class="dot"></span> referrer address</span>
-          <span class="copy-hint" id="copy-hint">click to copy</span>
-        </div>
-        <div class="install-body">
-          <span class="path" id="referrer-addr"></span>
-        </div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);padding:24px;font-family:var(--mono);font-size:13px;color:var(--text-secondary);line-height:2;text-align:left;">
+        <div style="color:var(--text-muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Get started</div>
+        <div><span style="color:var(--text-muted);">1.</span> Install the skill: <a href="/skills/goldbot-sachs.md" style="color:var(--gs-gold);text-decoration:none;">goldbotsachs.com/skills/goldbot-sachs.md</a></div>
+        <div><span style="color:var(--text-muted);">2.</span> On your first deposit, use referrer: <span style="color:var(--gs-gold);" id="referrer-addr"></span></div>
+        <div><span style="color:var(--text-muted);">3.</span> Share <strong style="color:var(--text-primary);">goldbotsachs.com/r/YOUR_ADDRESS</strong> to earn on referrals</div>
       </div>
-
-      <p class="referral-note" style="margin-top:16px;">
-        Install the <a href="/skills/goldbot-sachs.md">skill</a>, then pass this address as the referrer on your first deposit.
-      </p>
-      <p class="referral-note" style="margin-top:20px;">
-        After you deposit, share your own link to earn on referrals:<br>
-        <strong>goldbotsachs.com/r/YOUR_ADDRESS</strong>
-      </p>
     </div>
   </div>
 
@@ -257,17 +205,6 @@
 
     function truncateAddress(addr) {
       return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
-    }
-
-    function copyAddr() {
-      navigator.clipboard.writeText(document.getElementById('referrer-addr').textContent);
-      var hint = document.getElementById('copy-hint');
-      hint.textContent = 'copied!';
-      hint.classList.add('copied');
-      setTimeout(function() {
-        hint.textContent = 'click to copy';
-        hint.classList.remove('copied');
-      }, 2000);
     }
 
     var path = window.location.pathname;
