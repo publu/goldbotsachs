@@ -165,12 +165,14 @@
         Withdraw anytime. Then share your own link to earn even more.
       </p>
 
-      <div style="background:var(--bg-card);border:1px solid var(--border);padding:24px;font-family:var(--mono);font-size:13px;color:var(--text-secondary);line-height:2;text-align:left;">
-        <div style="color:var(--text-muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Get started</div>
-        <div><span style="color:var(--text-muted);">1.</span> Install the skill: <a href="/skills/goldbot-sachs.md" style="color:var(--gs-gold);text-decoration:none;">goldbotsachs.com/skills/goldbot-sachs.md</a></div>
-        <div><span style="color:var(--text-muted);">2.</span> On your first deposit, use referrer: <span style="color:var(--gs-gold);" id="referrer-addr"></span></div>
-        <div><span style="color:var(--text-muted);">3.</span> Share <strong style="color:var(--text-primary);">goldbotsachs.com/r/YOUR_ADDRESS</strong> to earn on referrals</div>
+      <div style="color:var(--text-muted);font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Tell your bot this</div>
+      <div id="bot-msg" onclick="copyMsg()" style="background:var(--bg-card);border:1px solid var(--border);padding:24px;font-family:var(--mono);font-size:13px;color:var(--text-secondary);line-height:1.8;text-align:left;cursor:pointer;transition:all 0.25s ease;">
+        <span id="bot-msg-text"></span>
+        <div style="margin-top:12px;font-size:11px;color:var(--text-muted);text-align:right;" id="bot-copy-hint">click to copy</div>
       </div>
+      <p style="margin-top:20px;font-family:var(--mono);font-size:12px;color:var(--text-muted);">
+        After you deposit, share <strong style="color:var(--text-secondary);">goldbotsachs.com/r/YOUR_ADDRESS</strong> to earn on referrals.
+      </p>
     </div>
   </div>
 
@@ -207,14 +209,31 @@
       return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
     }
 
+    function copyMsg() {
+      navigator.clipboard.writeText(document.getElementById('bot-msg-text').textContent);
+      var hint = document.getElementById('bot-copy-hint');
+      hint.textContent = 'copied!';
+      hint.style.color = 'var(--green)';
+      setTimeout(function() {
+        hint.textContent = 'click to copy';
+        hint.style.color = '';
+      }, 2000);
+    }
+
+    var botMsgEl = document.getElementById('bot-msg');
+    botMsgEl.addEventListener('mouseenter', function() { this.style.borderColor = 'var(--gs-gold)'; this.style.boxShadow = '0 0 0 1px var(--gs-gold), 0 8px 32px rgba(201,168,76,0.08)'; });
+    botMsgEl.addEventListener('mouseleave', function() { this.style.borderColor = ''; this.style.boxShadow = ''; });
+
     var path = window.location.pathname;
     var match = path.match(/^\/r\/(0x[0-9a-fA-F]{40})\/?$/);
 
     if (match && isValidAddress(match[1])) {
+      var ref = match[1];
       document.getElementById('referral-page').style.display = 'flex';
-      document.getElementById('referrer-display').textContent = truncateAddress(match[1]);
-      document.getElementById('referrer-addr').textContent = match[1];
-      document.title = 'Goldbot Sachs \u2014 Invited by ' + truncateAddress(match[1]);
+      document.getElementById('referrer-display').textContent = truncateAddress(ref);
+      document.getElementById('bot-msg-text').textContent =
+        'Install the Goldbot Sachs skill from https://goldbotsachs.com/skills/goldbot-sachs.md and deposit my idle USDC into clawUSDC. Use ' + ref + ' as my referrer.';
+      document.title = 'Goldbot Sachs \u2014 Invited by ' + truncateAddress(ref);
     } else {
       document.getElementById('not-found-page').style.display = 'flex';
     }
