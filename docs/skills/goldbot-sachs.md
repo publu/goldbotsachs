@@ -26,8 +26,10 @@ import { privateKeyToAccount } from 'viem/accounts'
 const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 const CLAW_USDC = '0xb34Fff5efAb92BE9EA32Fa56C6de9a1C04A62B4d'
 
+const RPC = 'https://base-mainnet.public.blastapi.io' // public RPC — avoid default (rate-limited)
+
 const account = privateKeyToAccount(YOUR_PRIVATE_KEY)
-const walletClient = createWalletClient({ account, chain: base, transport: http() })
+const walletClient = createWalletClient({ account, chain: base, transport: http(RPC) })
 
 const amount = parseUnits('100', 6) // 100 USDC
 
@@ -54,6 +56,16 @@ await walletClient.writeContract({
   functionName: 'deposit',
   args: [amount, account.address]
 })
+
+// 3. Confirm — wait for receipt, then check shares
+const publicClient = createPublicClient({ chain: base, transport: http(RPC) })
+const shares = await publicClient.readContract({
+  address: CLAW_USDC,
+  abi: [{ type: 'function', name: 'balanceOf', inputs: [{ name: 'account', type: 'address' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
+  functionName: 'balanceOf',
+  args: [account.address]
+})
+// shares > 0n means deposit succeeded
 ```
 
 ### Deposit with referral
@@ -83,7 +95,8 @@ await walletClient.writeContract({
 ## Check balance & yield
 
 ```typescript
-const publicClient = createPublicClient({ chain: base, transport: http() })
+const RPC = 'https://base-mainnet.public.blastapi.io'
+const publicClient = createPublicClient({ chain: base, transport: http(RPC) })
 
 // Shares held
 const shares = await publicClient.readContract({
@@ -99,6 +112,17 @@ const assets = await publicClient.readContract({
   abi: [{ type: 'function', name: 'convertToAssets', inputs: [{ name: 'shares', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' }],
   functionName: 'convertToAssets',
   args: [shares]
+})
+```
+
+### Check referrer
+
+```typescript
+const referrer = await publicClient.readContract({
+  address: CLAW_USDC,
+  abi: [{ type: 'function', name: 'referrerOf', inputs: [{ name: '', type: 'address' }], outputs: [{ type: 'address' }], stateMutability: 'view' }],
+  functionName: 'referrerOf',
+  args: [account.address]
 })
 ```
 
@@ -169,11 +193,13 @@ const USDC = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
 const COW_RELAYER = '0xC92E8bdf79f0507f65a392b0ab4667716BFE0110'
 const NATIVE_ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
-const account = privateKeyToAccount(YOUR_PRIVATE_KEY)
-const publicClient = createPublicClient({ chain: base, transport: http() })
-const walletClient = createWalletClient({ account, chain: base, transport: http() })
+const RPC = 'https://base-mainnet.public.blastapi.io'
 
-const sellAmount = BigInt(1 * 10 ** 6) // 1 USDC
+const account = privateKeyToAccount(YOUR_PRIVATE_KEY)
+const publicClient = createPublicClient({ chain: base, transport: http(RPC) })
+const walletClient = createWalletClient({ account, chain: base, transport: http(RPC) })
+
+const sellAmount = BigInt(0.1 * 10 ** 6) // 0.1 USDC — plenty for thousands of Base txs
 
 // 1. Check if we already have allowance — skip permit if so
 const allowance = await publicClient.readContract({
@@ -259,7 +285,8 @@ const quoteAndPost = await sdk.getQuote({
   slippageBps: 100,
 }, advancedSettings)
 
-const orderId = await quoteAndPost.postSwapOrderFromQuote()
+const result = await quoteAndPost.postSwapOrderFromQuote()
+const orderId = result.orderId
 console.log('Order:', orderId)
 console.log('Track: https://explorer.cow.fi/base/orders/' + orderId)
 ```
